@@ -31,8 +31,13 @@ export function Navbar() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-8 md:px-16 h-16 flex items-center justify-between">
-        <a href="#" className="text-white font-bold text-lg tracking-tight">
-          NM<span className="text-indigo-400">.</span>
+        <a
+          href="#"
+          className={`font-bold text-lg tracking-tight transition-colors ${
+            scrolled ? 'text-white' : 'text-neutral-900'
+          }`}
+        >
+          NM<span className="text-indigo-500">.</span>
         </a>
 
         {/* Desktop links */}
@@ -41,7 +46,11 @@ export function Navbar() {
             <a
               key={link.label}
               href={link.href}
-              className="text-neutral-400 hover:text-white text-sm transition-colors"
+              className={`text-sm transition-colors ${
+                scrolled
+                  ? 'text-neutral-400 hover:text-white'
+                  : 'text-neutral-700 hover:text-neutral-900'
+              }`}
             >
               {link.label}
             </a>
@@ -56,7 +65,11 @@ export function Navbar() {
 
         {/* Mobile menu toggle */}
         <button
-          className="md:hidden text-neutral-400 hover:text-white"
+          className={`md:hidden transition-colors ${
+            scrolled
+              ? 'text-neutral-400 hover:text-white'
+              : 'text-neutral-700 hover:text-neutral-900'
+          }`}
           onClick={() => setMenuOpen(!menuOpen)}
         >
           {menuOpen ? <X size={22} /> : <Menu size={22} />}
