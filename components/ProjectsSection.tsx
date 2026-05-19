@@ -97,11 +97,11 @@ export function ProjectsSection() {
         transition={{ duration: 0.7 }}
         className="mb-16"
       >
-        <p className="text-indigo-400 font-mono text-sm tracking-widest uppercase mb-3">
+        <p className="text-orange-700 font-mono text-sm tracking-widest uppercase mb-3">
           What I've built
         </p>
-        <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Projects</h2>
-        <p className="text-neutral-400 max-w-xl">
+        <h2 className="text-4xl md:text-5xl font-bold text-black mb-4">Projects</h2>
+        <p className="text-neutral-800 max-w-xl">
           Real products shipped to real users — from hackathon winners to production apps.
         </p>
       </motion.div>
