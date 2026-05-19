@@ -1,6 +1,5 @@
 import { Navbar } from '@/components/Navbar'
 import { HeroSection } from '@/components/HeroSection'
-import { CyberLandingSection } from '@/components/CyberLandingSection'
 import { ProjectsSection } from '@/components/ProjectsSection'
 import { ExperienceSection } from '@/components/ExperienceSection'
 import { SkillsSection } from '@/components/SkillsSection'
@@ -8,20 +7,19 @@ import { ContactSection } from '@/components/ContactSection'
 
 export default function Home() {
   return (
-    <main className="bg-[#ffd1b3] min-h-screen">
+    <main className="bg-black min-h-screen">
       <Navbar />
       <HeroSection />
-      <CyberLandingSection />
-      <div className="border-t border-black/15">
+      <div className="border-t border-neutral-900">
         <ProjectsSection />
       </div>
-      <div className="border-t border-black/15">
+      <div className="border-t border-neutral-900">
         <ExperienceSection />
       </div>
-      <div className="border-t border-black/15">
+      <div className="border-t border-neutral-900">
         <SkillsSection />
       </div>
-      <div className="border-t border-black/15">
+      <div className="border-t border-neutral-900">
         <ContactSection />
       </div>
     </main>

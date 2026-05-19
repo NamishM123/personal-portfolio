@@ -43,10 +43,10 @@ export function SkillsSection() {
         transition={{ duration: 0.7 }}
         className="mb-16"
       >
-        <p className="text-orange-700 font-mono text-sm tracking-widest uppercase mb-3">
+        <p className="text-indigo-400 font-mono text-sm tracking-widest uppercase mb-3">
           What I work with
         </p>
-        <h2 className="text-4xl md:text-5xl font-bold text-black mb-4">Skills</h2>
+        <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Skills</h2>
       </motion.div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -68,16 +68,16 @@ function SkillGroup({ group, index }: { group: typeof skillGroups[0]; index: num
       initial={{ opacity: 0, y: 30 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.5, delay: index * 0.08 }}
-      className="rounded-2xl border border-black/20 bg-black p-6"
+      className="rounded-2xl border border-neutral-800 bg-neutral-950 p-6"
     >
-      <h3 className="text-xs font-mono text-orange-300 tracking-widest uppercase mb-4">
+      <h3 className="text-xs font-mono text-indigo-400 tracking-widest uppercase mb-4">
         {group.label}
       </h3>
       <div className="flex flex-wrap gap-2">
         {group.skills.map((skill) => (
           <span
             key={skill}
-            className="px-3 py-1 rounded-full text-sm bg-[#1a1a1a] text-[#ffe6d1] border border-[#ffd1b3]/30 hover:border-[#ffd1b3] hover:text-white transition-all"
+            className="px-3 py-1 rounded-full text-sm bg-neutral-900 text-neutral-300 border border-neutral-700 hover:border-indigo-500/50 hover:text-white transition-all"
           >
             {skill}
           </span>

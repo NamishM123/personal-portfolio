@@ -58,10 +58,6 @@ body {
   to { transform: rotate(360deg); }
 }
 
-.transform-style-3d {
-  transform-style: preserve-3d;
-}
-
 /* Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
