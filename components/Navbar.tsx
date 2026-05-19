@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
+import { GlassButton } from '@/components/ui/apple-tahoe-liquid-glass-button'
 
 const links = [
   { label: 'Projects', href: '#projects' },
@@ -21,59 +22,53 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  const goTo = (href: string) => {
+    if (href.startsWith('#')) {
+      document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' })
+    } else {
+      window.location.href = href
+    }
+  }
+
   return (
     <motion.nav
       initial={{ y: -60, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, delay: 0.3 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-black/80 backdrop-blur-md border-b border-neutral-800' : 'bg-transparent'
+        scrolled ? 'bg-black/40 backdrop-blur-md border-b border-white/10' : 'bg-transparent'
       }`}
     >
       <div className="max-w-7xl mx-auto px-8 md:px-16 h-16 flex items-center justify-between">
-        <a
-          href="#"
-          className={`font-bold text-lg tracking-tight transition-colors ${
-            scrolled ? 'text-white' : 'text-neutral-900'
-          }`}
-        >
-          NM<span className="text-indigo-500">.</span>
-        </a>
+        <GlassButton size="sm" onClick={() => goTo('#')}>
+          <span className="font-bold tracking-tight">
+            NM<span className="text-orange-600">.</span>
+          </span>
+        </GlassButton>
 
-        {/* Desktop links */}
-        <div className="hidden md:flex items-center gap-8">
+        {/* Desktop links — all GlassButtons */}
+        <div className="hidden md:flex items-center gap-3">
           {links.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              className={`text-sm transition-colors ${
-                scrolled
-                  ? 'text-neutral-400 hover:text-white'
-                  : 'text-neutral-700 hover:text-neutral-900'
-              }`}
-            >
-              {link.label}
-            </a>
+            <GlassButton key={link.label} size="sm" onClick={() => goTo(link.href)}>
+              <span>{link.label}</span>
+            </GlassButton>
           ))}
-          <a
-            href="mailto:namishmannepalli2024@gmail.com"
-            className="px-4 py-1.5 rounded-full bg-indigo-600 text-white text-sm hover:bg-indigo-500 transition-colors"
+          <GlassButton
+            size="sm"
+            onClick={() => {
+              window.location.href = 'mailto:namishmannepalli2024@gmail.com'
+            }}
           >
-            Hire me
-          </a>
+            <span>Hire me</span>
+          </GlassButton>
         </div>
 
         {/* Mobile menu toggle */}
-        <button
-          className={`md:hidden transition-colors ${
-            scrolled
-              ? 'text-neutral-400 hover:text-white'
-              : 'text-neutral-700 hover:text-neutral-900'
-          }`}
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          {menuOpen ? <X size={22} /> : <Menu size={22} />}
-        </button>
+        <div className="md:hidden">
+          <GlassButton size="icon" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
+            {menuOpen ? <X size={18} /> : <Menu size={18} />}
+          </GlassButton>
+        </div>
       </div>
 
       <AnimatePresence>
@@ -82,18 +77,20 @@ export function Navbar() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="md:hidden bg-black/95 border-b border-neutral-800 overflow-hidden"
+            className="md:hidden bg-[#ffd1b3]/95 border-b border-white/20 overflow-hidden"
           >
-            <div className="px-8 py-4 flex flex-col gap-4">
+            <div className="px-8 py-4 flex flex-col gap-3 items-start">
               {links.map((link) => (
-                <a
+                <GlassButton
                   key={link.label}
-                  href={link.href}
-                  onClick={() => setMenuOpen(false)}
-                  className="text-neutral-300 hover:text-white text-base transition-colors"
+                  size="sm"
+                  onClick={() => {
+                    setMenuOpen(false)
+                    goTo(link.href)
+                  }}
                 >
-                  {link.label}
-                </a>
+                  <span>{link.label}</span>
+                </GlassButton>
               ))}
             </div>
           </motion.div>
