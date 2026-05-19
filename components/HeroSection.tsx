@@ -9,7 +9,7 @@ import { GitFork, Link, Mail, ArrowDown } from 'lucide-react'
 export function HeroSection() {
   return (
     <section className="relative min-h-screen w-full bg-[#ffd1b3] overflow-hidden flex flex-col">
-      <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="white" />
+      <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="#fff1e0" />
 
       <div className="flex flex-1 h-screen">
         {/* Left: text */}
