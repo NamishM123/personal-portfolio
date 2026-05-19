@@ -1,5 +1,6 @@
 import { Navbar } from '@/components/Navbar'
 import { HeroSection } from '@/components/HeroSection'
+import { CyberLandingSection } from '@/components/CyberLandingSection'
 import { ProjectsSection } from '@/components/ProjectsSection'
 import { ExperienceSection } from '@/components/ExperienceSection'
 import { SkillsSection } from '@/components/SkillsSection'
@@ -10,6 +11,7 @@ export default function Home() {
     <main className="bg-[#ffd1b3] min-h-screen">
       <Navbar />
       <HeroSection />
+      <CyberLandingSection />
       <div className="border-t border-black/15">
         <ProjectsSection />
       </div>
