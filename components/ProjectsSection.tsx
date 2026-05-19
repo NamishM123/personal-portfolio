@@ -2,179 +2,87 @@
 
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { ExternalLink, GitFork, MapPin, Utensils, Mic, Activity, Home, Brain } from 'lucide-react'
+import { InteractiveTravelCard } from '@/components/ui/3d-card'
 
 const projects = [
   {
     title: 'Poly Problems',
-    subtitle: 'Campus Reporting App',
+    subtitle: 'Campus Reporting App · Code Box',
     date: 'Dec 2025 – Present',
-    icon: <Activity size={20} />,
-    color: 'from-green-500 to-emerald-700',
-    accent: '#10b981',
-    url: 'https://www.polyproblems.com/',
-    description:
-      'A mobile-first app for reporting campus issues with photos, location tagging, SSO auth, and AI-powered classification. Led a 10-person team, architected the React Native frontend with Supabase, RESTful APIs, and real-time data sync.',
-    tags: ['React Native', 'Expo', 'Supabase', 'REST API', 'AI'],
-    role: 'Project Lead — Code Box',
+    imageUrl:
+      'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070&auto=format&fit=crop',
+    actionText: 'Visit Poly Problems →',
+    href: 'https://www.polyproblems.com/',
+    tags: ['React Native', 'Expo', 'Supabase', 'AI'],
+    badge: undefined,
   },
   {
     title: 'Starly',
     subtitle: 'AI Mock Interview Platform',
     date: 'Apr 2026 – Present',
-    icon: <Mic size={20} />,
-    color: 'from-yellow-400 to-orange-600',
-    accent: '#f59e0b',
-    url: null,
-    description:
-      'AI-powered mock interview agent with speech-to-text & text-to-speech, rubric-based feedback on pacing, pauses, and filler words. Facial recognition via Hugging Face, real-time transcription via Deepgram, and personalized question generation through the Groq API.',
-    tags: ['AI', 'Groq API', 'Deepgram', 'Hugging Face', 'Python'],
+    imageUrl:
+      'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=2076&auto=format&fit=crop',
+    actionText: 'Hackathon Winner',
+    href: '#',
+    tags: ['Groq API', 'Deepgram', 'Hugging Face', 'Python'],
     badge: '2nd Place — Poly-Prompt Hackathon',
   },
   {
     title: 'Settlr',
     subtitle: 'Map-Based Housing App',
     date: 'Mar 2026 – Present',
-    icon: <Home size={20} />,
-    color: 'from-blue-500 to-cyan-600',
-    accent: '#3b82f6',
-    url: 'https://housing-app-delta.vercel.app/',
-    description:
-      'Geospatial housing search with real-time affordability calculations to dynamically filter listings. Built reactive state management with geocoding and optimized map rendering for low-latency UI updates.',
+    imageUrl:
+      'https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=2073&auto=format&fit=crop',
+    actionText: 'Open Settlr →',
+    href: 'https://housing-app-delta.vercel.app/',
     tags: ['Next.js', 'Maps API', 'Geospatial', 'TypeScript'],
+    badge: undefined,
   },
   {
     title: 'Recipe Vision',
     subtitle: 'AI Recipe Generator from Photos',
     date: '2025',
-    icon: <Utensils size={20} />,
-    color: 'from-pink-500 to-rose-600',
-    accent: '#ec4899',
-    url: 'https://recepie-ingridients-aske.vercel.app/',
-    description:
-      'Upload a photo of your ingredients or paste a list and instantly get a full recipe with an AI-generated image preview. Snap your fridge and dinner is planned.',
-    tags: ['AI Vision', 'Image Generation', 'Next.js', 'API'],
+    imageUrl:
+      'https://images.unsplash.com/photo-1490645935967-10de6ba17061?q=80&w=2053&auto=format&fit=crop',
+    actionText: 'Try it →',
+    href: 'https://recepie-ingridients-aske.vercel.app/',
+    tags: ['AI Vision', 'Image Gen', 'Next.js'],
+    badge: undefined,
   },
   {
-    title: 'Seagull (Raccoon)',
-    subtitle: 'End-to-End TRT / HRT Companion',
+    title: 'Seagull',
+    subtitle: 'TRT / HRT Companion App',
     date: '2025',
-    icon: <Brain size={20} />,
-    color: 'from-purple-500 to-violet-700',
-    accent: '#8b5cf6',
-    url: 'https://vercel.com/namishm123s-projects/raccoon',
-    description:
-      'A complete tool for people on testosterone replacement therapy or other hormone replacements. Makes doctor visits less challenging and scary with tracking, insights, and guided preparation for appointments.',
-    tags: ['Health Tech', 'React', 'TypeScript', 'Vercel'],
+    imageUrl:
+      'https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=2070&auto=format&fit=crop',
+    actionText: 'View App →',
+    href: 'https://vercel.com/namishm123s-projects/raccoon',
+    tags: ['Health Tech', 'React', 'TypeScript'],
+    badge: undefined,
   },
   {
     title: 'Benu',
     subtitle: 'AI Restaurant Ordering Platform',
     date: 'Dec 2025 – Present',
-    icon: <Utensils size={20} />,
-    color: 'from-orange-400 to-red-600',
-    accent: '#f97316',
-    url: null,
-    description:
-      'Mobile-first restaurant ordering with QR-code ordering, real-time order tracking, and dedicated admin & kitchen dashboards. Engineered an OpenAI GPT-4o-mini chatbot with allergen-first safety architecture and multilingual anti-prompt-injection guardrails.',
-    tags: ['Next.js 15', 'React 19', 'TypeScript', 'OpenAI', 'Realtime'],
-    role: 'AI Team Project',
+    imageUrl:
+      'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=2070&auto=format&fit=crop',
+    actionText: 'AI Team Project',
+    href: '#',
+    tags: ['Next.js 15', 'OpenAI', 'React 19', 'Realtime'],
+    badge: undefined,
   },
   {
     title: 'FLEX',
-    subtitle: 'Workout Tracking Application',
+    subtitle: 'Workout Tracking App',
     date: 'Jan 2025 – Present',
-    icon: <Activity size={20} />,
-    color: 'from-lime-400 to-green-600',
-    accent: '#84cc16',
-    url: null,
-    description:
-      'RESTful backend with a progressive overload algorithm that tracks strength and calculates optimal weight increases from past performance. Mobile-first React frontend with JWT-based authentication and Tailwind CSS.',
-    tags: ['React', 'REST API', 'JWT', 'Tailwind CSS', 'Progressive Overload'],
+    imageUrl:
+      'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=2070&auto=format&fit=crop',
+    actionText: 'Progressive Overload Engine',
+    href: '#',
+    tags: ['React', 'REST API', 'JWT', 'Tailwind'],
+    badge: undefined,
   },
 ]
-
-const containerVariants = {
-  hidden: {},
-  visible: {
-    transition: { staggerChildren: 0.12 },
-  },
-}
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-}
-
-function ProjectCard({ project, index }: { project: typeof projects[0]; index: number }) {
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-80px' })
-
-  return (
-    <motion.div
-      ref={ref}
-      variants={cardVariants}
-      initial="hidden"
-      animate={inView ? 'visible' : 'hidden'}
-      className="group relative rounded-2xl border border-neutral-800 bg-neutral-950 overflow-hidden hover:border-neutral-600 transition-all duration-300 hover:-translate-y-1"
-      style={{ '--accent': project.accent } as React.CSSProperties}
-    >
-      {/* Gradient top bar */}
-      <div className={`h-1 w-full bg-gradient-to-r ${project.color}`} />
-
-      <div className="p-6">
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-lg bg-gradient-to-br ${project.color} text-white`}>
-              {project.icon}
-            </div>
-            <div>
-              <h3 className="font-bold text-white text-lg leading-tight">{project.title}</h3>
-              <p className="text-neutral-400 text-sm">{project.subtitle}</p>
-            </div>
-          </div>
-          <div className="flex gap-2 shrink-0">
-            {project.url && (
-              <a
-                href={project.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 rounded-lg border border-neutral-700 text-neutral-400 hover:text-white hover:border-neutral-500 transition-all"
-              >
-                <ExternalLink size={14} />
-              </a>
-            )}
-          </div>
-        </div>
-
-        {project.badge && (
-          <span className="inline-block mb-3 px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
-            🏆 {project.badge}
-          </span>
-        )}
-
-        {project.role && (
-          <p className="text-xs text-neutral-500 mb-2 font-mono">{project.role}</p>
-        )}
-
-        <p className="text-neutral-300 text-sm leading-relaxed mb-4">{project.description}</p>
-
-        <div className="flex flex-wrap gap-2">
-          {project.tags.map((tag) => (
-            <span
-              key={tag}
-              className="px-2 py-0.5 rounded-md text-xs bg-neutral-800 text-neutral-400 border border-neutral-700"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-
-        <p className="text-xs text-neutral-600 mt-4 font-mono">{project.date}</p>
-      </div>
-    </motion.div>
-  )
-}
 
 export function ProjectsSection() {
   const titleRef = useRef(null)
@@ -198,11 +106,50 @@ export function ProjectsSection() {
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+        style={{ perspective: '1200px' }}
+      >
         {projects.map((project, index) => (
-          <ProjectCard key={project.title} project={project} index={index} />
+          <ProjectEntry key={project.title} project={project} index={index} />
         ))}
       </div>
     </section>
+  )
+}
+
+function ProjectEntry({
+  project,
+  index,
+}: {
+  project: (typeof projects)[0]
+  index: number
+}) {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, margin: '-80px' })
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 50 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.6, delay: index * 0.08 }}
+    >
+      <InteractiveTravelCard
+        title={project.title}
+        subtitle={project.subtitle}
+        imageUrl={project.imageUrl}
+        actionText={project.actionText}
+        href={project.href}
+        tags={project.tags}
+        badge={project.badge}
+        onActionClick={
+          project.href !== '#'
+            ? () => window.open(project.href, '_blank')
+            : undefined
+        }
+        className="w-full"
+      />
+    </motion.div>
   )
 }
