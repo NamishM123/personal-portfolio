@@ -84,11 +84,34 @@ export function HeroSection() {
           </motion.div>
         </div>
 
-        {/* Right: Spline 3D */}
-        <div className="hidden md:flex flex-1 relative">
-          <SplineScene
-            scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-            className="w-full h-full"
+        {/* Right: Spline 3D — purple-tinted to match the theme */}
+        <div className="hidden md:flex flex-1 relative isolate">
+          {/* Soft purple halo behind the robot */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_60%_45%,rgba(139,92,246,0.3),rgba(99,102,241,0.15)_45%,transparent_70%)] blur-2xl"
+          />
+          {/* Filter wrapper — recolors the robot canvas toward indigo/violet */}
+          <div
+            className="relative h-full w-full"
+            style={{
+              filter:
+                'hue-rotate(230deg) saturate(1.45) brightness(0.95) contrast(1.05)',
+            }}
+          >
+            <SplineScene
+              scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+              className="w-full h-full"
+            />
+          </div>
+          {/* Subtle violet wash on top to pull cool neutrals into the palette */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 mix-blend-color"
+            style={{
+              background:
+                'radial-gradient(ellipse at center, rgba(139,92,246,0.35), rgba(99,102,241,0.25) 60%, transparent 90%)',
+            }}
           />
         </div>
       </div>
