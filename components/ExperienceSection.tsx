@@ -1,7 +1,13 @@
 'use client'
 
-import { useRef } from 'react'
-import { motion, useInView, useScroll, useSpring, useTransform } from 'framer-motion'
+import { useRef, type ReactNode } from 'react'
+import {
+  motion,
+  useScroll,
+  useSpring,
+  useTransform,
+  type MotionValue,
+} from 'framer-motion'
 import { Shield, Code2, Bot } from 'lucide-react'
 import { SpineBackground } from '@/components/ui/spine-background'
 
@@ -10,10 +16,9 @@ const experiences = [
     role: 'Project Lead',
     company: 'Code Box',
     period: 'Dec 2025 – Present',
-    icon: <Code2 size={18} />,
-    color: 'text-green-400',
-    border: 'border-green-500/30',
-    bg: 'bg-green-500/5',
+    icon: <Code2 size={20} />,
+    accent: 'from-green-400/40 via-green-500/30 to-emerald-950/60',
+    accentText: 'text-green-300',
     bullets: [
       'Led a 10-person team building Poly Problems, a mobile-first campus reporting app with SSO auth and AI-powered classification.',
       'Delegated tasks and coordinated sprints across frontend, backend, and AI to ensure steady on-time progress.',
@@ -25,10 +30,9 @@ const experiences = [
     role: 'Cybersecurity Intern',
     company: 'Cal Poly State University, SLO',
     period: 'Dec 2025 – Present',
-    icon: <Shield size={18} />,
-    color: 'text-blue-400',
-    border: 'border-blue-500/30',
-    bg: 'bg-blue-500/5',
+    icon: <Shield size={20} />,
+    accent: 'from-blue-400/40 via-blue-500/30 to-indigo-950/60',
+    accentText: 'text-blue-300',
     bullets: [
       'Built AI-powered Python pipelines analyzing open-source ecosystems using GitHub, NPM, and CVE data.',
       'Leveraged graph theory and ML-based anomaly detection to uncover dependency and contributor risks.',
@@ -40,10 +44,9 @@ const experiences = [
     role: 'AI Team Member',
     company: 'Benu Restaurant Platform',
     period: 'Dec 2025 – Present',
-    icon: <Bot size={18} />,
-    color: 'text-orange-400',
-    border: 'border-orange-500/30',
-    bg: 'bg-orange-500/5',
+    icon: <Bot size={20} />,
+    accent: 'from-orange-400/40 via-orange-500/30 to-amber-950/60',
+    accentText: 'text-orange-300',
     bullets: [
       'Built a mobile-first restaurant ordering platform using Next.js 15, React 19, and TypeScript with QR-code ordering.',
       'Engineered an OpenAI GPT-4o-mini chatbot with allergen-first safety architecture and medical emergency override detection.',
@@ -53,34 +56,68 @@ const experiences = [
 ]
 
 export function ExperienceSection() {
-  const titleRef = useRef(null)
-  const inView = useInView(titleRef, { once: true })
-  const stackRef = useRef<HTMLDivElement>(null)
+  const sectionRef = useRef<HTMLElement>(null)
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end end'],
+  })
+  const smooth = useSpring(scrollYProgress, {
+    stiffness: 90,
+    damping: 28,
+    mass: 0.5,
+  })
+
+  const headerOpacity = useTransform(smooth, [0, 0.04, 0.12], [1, 1, 0])
+  const headerY = useTransform(smooth, [0, 0.12], [0, -40])
+
+  const counter = useTransform(smooth, (v) =>
+    String(Math.min(experiences.length, Math.floor(v * experiences.length) + 1)).padStart(2, '0')
+  )
 
   return (
-    <section className="py-24 px-8 md:px-16 max-w-7xl mx-auto" id="experience">
-      <motion.div
-        ref={titleRef}
-        initial={{ opacity: 0, y: 20 }}
-        animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.7 }}
-        className="mb-16"
-      >
-        <p className="text-indigo-400 font-mono text-sm tracking-widest uppercase mb-3">
-          Where I've worked
-        </p>
-        <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Experience</h2>
-      </motion.div>
+    <section
+      ref={sectionRef}
+      id="experience"
+      className="relative"
+      style={{ height: `${experiences.length * 110 + 60}vh` }}
+    >
+      <div className="sticky top-0 h-screen w-full overflow-hidden">
+        <motion.div
+          style={{ opacity: headerOpacity, y: headerY }}
+          className="absolute top-24 left-8 z-30 md:left-16"
+        >
+          <p className="mb-3 font-mono text-sm uppercase tracking-widest text-pink-300/80">
+            Where I've worked
+          </p>
+          <h2 className="text-4xl font-bold text-white md:text-6xl">Experience</h2>
+        </motion.div>
 
-      <div ref={stackRef} className="relative" style={{ perspective: '1800px' }}>
-        <SpineBackground targetRef={stackRef} count={32} />
+        <div className="absolute bottom-10 left-8 z-30 md:left-16">
+          <div className="font-mono text-xs uppercase tracking-[0.3em] text-white/40">
+            Role
+          </div>
+          <div className="mt-1 flex items-baseline gap-2 font-mono text-white/90">
+            <motion.span className="text-5xl font-bold">{counter}</motion.span>
+            <span className="text-lg text-white/40">
+              / {String(experiences.length).padStart(2, '0')}
+            </span>
+          </div>
+        </div>
 
-        {/* Timeline line */}
-        <div className="absolute left-6 top-0 bottom-0 w-px bg-neutral-800 hidden md:block z-10" />
+        <SpineBackground progress={smooth} count={34} />
 
-        <div className="relative z-10 space-y-10">
+        <div
+          className="absolute inset-0 z-10 flex items-center justify-center"
+          style={{ perspective: '1800px' }}
+        >
           {experiences.map((exp, i) => (
-            <ExperienceCard key={i} exp={exp} index={i} />
+            <ExperienceDeckCard
+              key={exp.role}
+              exp={exp}
+              index={i}
+              total={experiences.length}
+              progress={smooth}
+            />
           ))}
         </div>
       </div>
@@ -88,70 +125,95 @@ export function ExperienceSection() {
   )
 }
 
-function ExperienceCard({ exp, index }: { exp: typeof experiences[0]; index: number }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, { once: true, margin: '-80px' })
+function ExperienceDeckCard({
+  exp,
+  index,
+  total,
+  progress,
+}: {
+  exp: (typeof experiences)[0]
+  index: number
+  total: number
+  progress: MotionValue<number>
+}) {
+  const segment = 1 / total
+  const peak = (index + 0.5) * segment
+  const enter = Math.max(0, peak - segment * 0.85)
+  const exit = Math.min(1, peak + segment * 0.85)
 
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start end', 'end start'],
-  })
-  const smooth = useSpring(scrollYProgress, { stiffness: 80, damping: 22, mass: 0.5 })
-  const rotateY = useTransform(smooth, [0, 0.5, 1], [35, 0, -25])
-  const rotateX = useTransform(smooth, [0, 0.5, 1], [12, 0, -6])
-  const scale = useTransform(smooth, [0, 0.5, 1], [0.88, 1, 0.92])
-  const opacity = useTransform(smooth, [0, 0.2, 0.8, 1], [0.2, 1, 1, 0.4])
+  const x = useTransform(progress, [enter, peak, exit], [520, 0, -540])
+  const y = useTransform(progress, [enter, peak, exit], [320, 0, -320])
+  const z = useTransform(progress, [enter, peak, exit], [-260, 0, -340])
+  const rotateY = useTransform(progress, [enter, peak, exit], [-48, 0, 42])
+  const rotateX = useTransform(progress, [enter, peak, exit], [22, 0, -18])
+  const rotateZ = useTransform(progress, [enter, peak, exit], [-12, 0, 10])
+  const scale = useTransform(progress, [enter, peak, exit], [0.78, 1, 0.72])
+  const opacity = useTransform(
+    progress,
+    [enter - 0.01, enter + 0.04, exit - 0.04, exit + 0.01],
+    [0, 1, 1, 0]
+  )
+  const filter = useTransform(
+    progress,
+    [enter, peak - segment * 0.25, peak, peak + segment * 0.25, exit],
+    ['blur(10px)', 'blur(2px)', 'blur(0px)', 'blur(2px)', 'blur(10px)']
+  )
 
   return (
     <motion.div
-      ref={ref}
       style={{
+        x,
+        y,
+        z,
         rotateY,
         rotateX,
+        rotateZ,
         scale,
         opacity,
+        filter,
         transformStyle: 'preserve-3d',
-        transformPerspective: 1400,
       }}
-      className={`relative md:ml-16 rounded-2xl border ${exp.border} ${exp.bg} backdrop-blur-xl p-6 ${
-        inView ? 'card-glow-in' : ''
-      }`}
+      className="absolute h-[28rem] w-[22rem] md:h-[32rem] md:w-[32rem] lg:h-[34rem] lg:w-[36rem]"
     >
-      {/* Timeline dot */}
-      <motion.div
-        initial={{ scale: 0, opacity: 0 }}
-        animate={inView ? { scale: 1, opacity: 1 } : {}}
-        transition={{ duration: 0.5, delay: index * 0.15 + 0.4, ease: 'backOut' }}
-        className={`absolute -left-[2.85rem] top-6 w-3 h-3 rounded-full border-2 border-neutral-800 bg-neutral-950 hidden md:block ring-2 ring-offset-2 ring-offset-black ${exp.color.replace('text-', 'ring-')}`}
-      />
+      <div
+        className={`relative h-full w-full overflow-hidden rounded-3xl border border-white/15 bg-gradient-to-br ${exp.accent} backdrop-blur-xl shadow-[0_40px_120px_-20px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.12)]`}
+      >
+        <div className="absolute inset-0 bg-black/30" />
 
-      <div className="flex items-start gap-3 mb-4">
-        <span className={exp.color}>{exp.icon}</span>
-        <div>
-          <h3 className="font-bold text-white text-lg">{exp.role}</h3>
-          <p className="text-neutral-400 text-sm">{exp.company}</p>
-          <p className="text-neutral-600 text-xs font-mono mt-0.5">{exp.period}</p>
+        <div className="relative flex h-full flex-col justify-between p-7 text-white">
+          <div className="flex items-start justify-between">
+            <span className="font-mono text-xs tracking-[0.3em] text-white/60">
+              {String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
+            </span>
+            <span className={`flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-white/10 backdrop-blur-md ${exp.accentText}`}>
+              {exp.icon}
+            </span>
+          </div>
+
+          <div>
+            <h3 className="text-3xl font-black uppercase leading-[0.95] tracking-tight md:text-4xl">
+              {exp.role}
+            </h3>
+            <p className="mt-1 text-sm text-white/80">{exp.company}</p>
+            <p className="mt-0.5 font-mono text-xs text-white/50">{exp.period}</p>
+
+            <ul className="mt-5 space-y-2">
+              {exp.bullets.map((b, i) => (
+                <Bullet key={i}>{b}</Bullet>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
-
-      <ul className="space-y-2">
-        {exp.bullets.map((b, i) => (
-          <motion.li
-            key={i}
-            initial={{ opacity: 0, x: -10 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{
-              duration: 0.4,
-              delay: index * 0.15 + 0.5 + i * 0.06,
-              ease: 'easeOut',
-            }}
-            className="flex gap-2 text-sm text-neutral-300"
-          >
-            <span className="text-neutral-600 mt-1 shrink-0">·</span>
-            <span>{b}</span>
-          </motion.li>
-        ))}
-      </ul>
     </motion.div>
+  )
+}
+
+function Bullet({ children }: { children: ReactNode }) {
+  return (
+    <li className="flex gap-2 text-sm text-white/85">
+      <span className="mt-1 shrink-0 text-white/40">›</span>
+      <span>{children}</span>
+    </li>
   )
 }

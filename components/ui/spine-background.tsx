@@ -1,6 +1,5 @@
 'use client'
 
-import { useRef } from 'react'
 import {
   motion,
   useScroll,
@@ -10,25 +9,35 @@ import {
 } from 'framer-motion'
 
 interface SpineBackgroundProps {
-  targetRef: React.RefObject<HTMLElement | null>
+  /** Optional external progress (0→1). When provided, drives the spine instead of useScroll. */
+  progress?: MotionValue<number>
+  targetRef?: React.RefObject<HTMLElement | null>
   count?: number
 }
 
-export function SpineBackground({ targetRef, count = 28 }: SpineBackgroundProps) {
-  const { scrollYProgress } = useScroll({
+export function SpineBackground({
+  progress,
+  targetRef,
+  count = 30,
+}: SpineBackgroundProps) {
+  // If no external progress is supplied, fall back to scroll on the target
+  const localScroll = useScroll({
     target: targetRef,
     offset: ['start end', 'end start'],
   })
-  const smooth = useSpring(scrollYProgress, {
+  const sourceProgress = progress ?? localScroll.scrollYProgress
+
+  const smooth = useSpring(sourceProgress, {
     stiffness: 70,
     damping: 22,
     mass: 0.5,
   })
 
-  const rotateY = useTransform(smooth, [0, 0.5, 1], [55, 0, -55])
-  const rotateX = useTransform(smooth, [0, 0.5, 1], [12, 0, -8])
-  const rotateZ = useTransform(smooth, [0, 0.5, 1], [-6, 0, 6])
-  const y = useTransform(smooth, [0, 1], ['-8%', '8%'])
+  // Range chosen so the spine sweeps through ~180° across the section
+  const rotateY = useTransform(smooth, [0, 0.5, 1], [-90, 0, 90])
+  const rotateX = useTransform(smooth, [0, 0.5, 1], [10, 0, -10])
+  const rotateZ = useTransform(smooth, [0, 0.5, 1], [-4, 0, 4])
+  const y = useTransform(smooth, [0, 1], ['-6%', '6%'])
 
   return (
     <motion.div
@@ -41,8 +50,14 @@ export function SpineBackground({ targetRef, count = 28 }: SpineBackgroundProps)
         transformStyle: 'preserve-3d',
         transformPerspective: 1800,
       }}
-      className="pointer-events-none absolute inset-y-0 left-1/2 z-0 flex w-40 -translate-x-1/2 flex-col items-center justify-center gap-1.5"
+      className="pointer-events-none absolute inset-y-0 left-1/2 z-0 flex w-48 -translate-x-1/2 flex-col items-center justify-center gap-2"
     >
+      {/* halo */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[110%] w-[260%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(244,114,182,0.18),rgba(168,85,247,0.08)_45%,transparent_70%)] blur-3xl"
+      />
+
       {Array.from({ length: count }).map((_, i) => (
         <Vertebra key={i} index={i} total={count} smooth={smooth} />
       ))}
@@ -60,14 +75,15 @@ function Vertebra({
   smooth: MotionValue<number>
 }) {
   const phase = index / total
-  const baseWidth = 110 + Math.sin(index * 0.55) * 14
-  const height = 22 + Math.cos(index * 0.7) * 4
+  const baseWidth = 130 + Math.sin(index * 0.55) * 18
+  const height = 26 + Math.cos(index * 0.7) * 4
+  const wingWidth = 18 + Math.sin(index * 0.9) * 6
 
-  const tilt = useTransform(smooth, [0, 1], [-15 + index * 0.4, 15 - index * 0.4])
+  const tilt = useTransform(smooth, [0, 1], [-18 + index * 0.4, 18 - index * 0.4])
   const offsetZ = useTransform(smooth, [0, 0.5, 1], [
-    -40 + Math.sin(phase * Math.PI) * 30,
-    Math.sin(phase * Math.PI) * 30,
-    40 + Math.sin(phase * Math.PI) * 30,
+    -50 + Math.sin(phase * Math.PI) * 40,
+    Math.sin(phase * Math.PI) * 40,
+    50 + Math.sin(phase * Math.PI) * 40,
   ])
 
   return (
@@ -81,18 +97,27 @@ function Vertebra({
       }}
       className="relative"
     >
-      {/* transverse processes (side wings) */}
-      <div className="absolute top-1/2 -left-4 h-2 w-7 -translate-y-1/2 rounded-full bg-gradient-to-b from-indigo-400/40 via-indigo-600/50 to-indigo-900/60 shadow-[0_2px_4px_rgba(0,0,0,0.5)]" />
-      <div className="absolute top-1/2 -right-4 h-2 w-7 -translate-y-1/2 rounded-full bg-gradient-to-b from-indigo-400/40 via-indigo-600/50 to-indigo-900/60 shadow-[0_2px_4px_rgba(0,0,0,0.5)]" />
+      {/* transverse processes — chunky side wings */}
+      <div
+        style={{ width: wingWidth }}
+        className="absolute top-1/2 -left-5 h-2.5 -translate-y-1/2 rounded-full bg-gradient-to-b from-pink-300/60 via-pink-500/70 to-rose-900/80 shadow-[0_3px_6px_rgba(0,0,0,0.55)]"
+      />
+      <div
+        style={{ width: wingWidth }}
+        className="absolute top-1/2 -right-5 h-2.5 -translate-y-1/2 rounded-full bg-gradient-to-b from-pink-300/60 via-pink-500/70 to-rose-900/80 shadow-[0_3px_6px_rgba(0,0,0,0.55)]"
+      />
+
+      {/* spinous process — small bump on top */}
+      <div className="absolute -top-1 left-1/2 h-2 w-3 -translate-x-1/2 rounded-t-full bg-gradient-to-b from-pink-400/70 to-rose-800/70" />
 
       {/* vertebra body */}
-      <div className="absolute inset-0 rounded-[14px] bg-gradient-to-b from-indigo-300/30 via-indigo-500/40 to-indigo-950/60 shadow-[0_4px_14px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.15),inset_0_-2px_4px_rgba(0,0,0,0.4)] backdrop-blur-sm" />
+      <div className="absolute inset-0 rounded-[16px] bg-gradient-to-b from-pink-200/40 via-pink-500/55 to-rose-950/70 shadow-[0_6px_18px_rgba(190,24,93,0.35),inset_0_1px_0_rgba(255,255,255,0.22),inset_0_-3px_6px_rgba(0,0,0,0.45)] backdrop-blur-sm" />
 
       {/* central foramen (the hole) */}
-      <div className="absolute left-1/2 top-1/2 h-2.5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-black/60 shadow-[inset_0_1px_2px_rgba(0,0,0,0.8)]" />
+      <div className="absolute left-1/2 top-1/2 h-3 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-b from-black/80 to-rose-950/90 shadow-[inset_0_1px_2px_rgba(0,0,0,0.9),0_0_8px_rgba(244,114,182,0.4)]" />
 
-      {/* faint inner highlight */}
-      <div className="absolute inset-x-2 top-0.5 h-px rounded-full bg-white/20" />
+      {/* top highlight */}
+      <div className="absolute inset-x-3 top-1 h-px rounded-full bg-white/30" />
     </motion.div>
   )
 }
