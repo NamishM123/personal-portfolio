@@ -8,8 +8,13 @@ import {
   useTransform,
   type MotionValue,
 } from 'framer-motion'
+import dynamic from 'next/dynamic'
 import { Shield, Code2, Bot } from 'lucide-react'
-import { SpineBackground } from '@/components/ui/spine-background'
+
+const RobotSpine = dynamic(
+  () => import('@/components/ui/robot-spine').then((m) => m.RobotSpine),
+  { ssr: false }
+)
 
 const experiences = [
   {
@@ -104,7 +109,7 @@ export function ExperienceSection() {
           </div>
         </div>
 
-        <SpineBackground progress={smooth} count={34} />
+        <RobotSpine progress={smooth} />
 
         <div
           className="absolute inset-0 z-10 flex items-center justify-center"
@@ -138,25 +143,31 @@ function ExperienceDeckCard({
 }) {
   const segment = 1 / total
   const peak = (index + 0.5) * segment
-  const enter = Math.max(0, peak - segment * 0.85)
-  const exit = Math.min(1, peak + segment * 0.85)
+  const enter = Math.max(0, peak - segment * 1.1)
+  const exit = Math.min(1, peak + segment * 1.1)
+  const enterHold = peak - segment * 0.25
+  const exitHold = peak + segment * 0.25
 
-  const x = useTransform(progress, [enter, peak, exit], [520, 0, -540])
-  const y = useTransform(progress, [enter, peak, exit], [320, 0, -320])
-  const z = useTransform(progress, [enter, peak, exit], [-260, 0, -340])
-  const rotateY = useTransform(progress, [enter, peak, exit], [-48, 0, 42])
-  const rotateX = useTransform(progress, [enter, peak, exit], [22, 0, -18])
-  const rotateZ = useTransform(progress, [enter, peak, exit], [-12, 0, 10])
-  const scale = useTransform(progress, [enter, peak, exit], [0.78, 1, 0.72])
+  const x = useTransform(progress, [enter, peak, exit], [620, 0, -640])
+  const y = useTransform(progress, [enter, peak, exit], [340, 0, -340])
+  const z = useTransform(progress, [enter, peak, exit], [-320, 0, -380])
+  const rotateY = useTransform(progress, [enter, peak, exit], [-38, 0, 32])
+  const rotateX = useTransform(progress, [enter, peak, exit], [14, 0, -10])
+  const rotateZ = useTransform(progress, [enter, peak, exit], [-8, 0, 6])
+  const scale = useTransform(
+    progress,
+    [enter, enterHold, exitHold, exit],
+    [0.82, 1, 1, 0.78]
+  )
   const opacity = useTransform(
     progress,
-    [enter - 0.01, enter + 0.04, exit - 0.04, exit + 0.01],
+    [enter, enter + segment * 0.18, exit - segment * 0.18, exit],
     [0, 1, 1, 0]
   )
   const filter = useTransform(
     progress,
-    [enter, peak - segment * 0.25, peak, peak + segment * 0.25, exit],
-    ['blur(10px)', 'blur(2px)', 'blur(0px)', 'blur(2px)', 'blur(10px)']
+    [enter, enterHold, peak, exitHold, exit],
+    ['blur(14px)', 'blur(2px)', 'blur(0px)', 'blur(2px)', 'blur(14px)']
   )
 
   return (
@@ -173,14 +184,21 @@ function ExperienceDeckCard({
         filter,
         transformStyle: 'preserve-3d',
       }}
-      className="absolute h-[28rem] w-[22rem] md:h-[32rem] md:w-[32rem] lg:h-[34rem] lg:w-[36rem]"
+      className="absolute h-[30rem] w-[22rem] md:h-[34rem] md:w-[32rem] lg:h-[36rem] lg:w-[38rem]"
     >
-      <div
-        className={`relative h-full w-full overflow-hidden rounded-3xl border border-white/15 bg-gradient-to-br ${exp.accent} backdrop-blur-xl shadow-[0_40px_120px_-20px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.12)]`}
-      >
-        <div className="absolute inset-0 bg-black/30" />
+      {/* Outer glow halo */}
+      <div className="pointer-events-none absolute -inset-4 rounded-[2.5rem] bg-[radial-gradient(circle_at_center,rgba(168,85,247,0.25),rgba(99,102,241,0.15)_40%,transparent_70%)] blur-2xl" />
 
-        <div className="relative flex h-full flex-col justify-between p-7 text-white">
+      <div className="relative h-full w-full overflow-hidden rounded-3xl">
+        <div className="pointer-events-none absolute inset-0 z-30 rounded-3xl border border-white/25 shadow-[inset_0_1px_0_rgba(255,255,255,0.25),inset_0_-1px_0_rgba(255,255,255,0.05),0_50px_120px_-20px_rgba(0,0,0,0.7)]" />
+
+        {/* Frosted glass surface */}
+        <div className="absolute inset-0 backdrop-blur-2xl" />
+        <div className="absolute inset-0 bg-white/[0.04]" />
+        <div className={`absolute inset-0 bg-gradient-to-br ${exp.accent} opacity-30`} />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_0%,rgba(255,255,255,0.12),transparent_50%)]" />
+
+        <div className="relative z-20 flex h-full flex-col justify-between p-7 text-white">
           <div className="flex items-start justify-between">
             <span className="font-mono text-xs tracking-[0.3em] text-white/60">
               {String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}

@@ -2,8 +2,13 @@
 
 import { useRef } from 'react'
 import { motion, useScroll, useSpring, useTransform } from 'framer-motion'
+import dynamic from 'next/dynamic'
 import { DeckCard, type DeckCardData } from '@/components/ui/deck-card'
-import { SpineBackground } from '@/components/ui/spine-background'
+
+const RobotSpine = dynamic(
+  () => import('@/components/ui/robot-spine').then((m) => m.RobotSpine),
+  { ssr: false }
+)
 
 const projects: DeckCardData[] = [
   {
@@ -128,8 +133,8 @@ export function ProjectsSection() {
           </div>
         </div>
 
-        {/* Spine */}
-        <SpineBackground progress={smooth} count={32} />
+        {/* 3D robotic spine */}
+        <RobotSpine progress={smooth} />
 
         {/* Cards */}
         <div
