@@ -103,9 +103,9 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
       href={project.href}
       target={project.href !== '#' ? '_blank' : undefined}
       rel="noopener noreferrer"
-      className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_20px_60px_-20px_rgba(0,0,0,0.6)] transition-all hover:border-indigo-400/40 hover:bg-white/[0.07]"
+      className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/15 bg-white/[0.02] p-6 backdrop-blur-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.18),inset_0_-1px_0_rgba(255,255,255,0.04),0_20px_60px_-20px_rgba(0,0,0,0.6)] transition-all hover:border-indigo-400/40 hover:bg-white/[0.05]"
     >
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_30%_0%,rgba(255,255,255,0.08),transparent_55%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_30%_0%,rgba(255,255,255,0.12),transparent_55%)]" />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-indigo-500/[0.06]" />
 
       <div className="relative flex flex-col h-full">
@@ -130,7 +130,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
             {project.tags.map((tag) => (
               <span
                 key={tag}
-                className="rounded-md border border-white/10 bg-white/[0.04] px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-neutral-300 backdrop-blur-sm"
+                className="rounded-md border border-white/15 bg-white/[0.03] px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-neutral-300 backdrop-blur-md"
               >
                 {tag}
               </span>
