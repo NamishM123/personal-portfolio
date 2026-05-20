@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { SplineScene } from '@/components/ui/splite'
 import { Spotlight } from '@/components/ui/spotlight'
+import AnimatedTextCycle from '@/components/ui/animated-text-cycle'
 import { GitFork, Link, Mail, ArrowDown } from 'lucide-react'
 
 export function HeroSection() {
@@ -30,7 +31,23 @@ export function HeroSection() {
                 Mannepalli
               </span>
             </h1>
-            <p className="mt-6 text-neutral-400 text-lg max-w-md leading-relaxed">
+            <p className="mt-6 text-2xl md:text-3xl text-neutral-300 font-light leading-tight">
+              I ship{' '}
+              <AnimatedTextCycle
+                words={[
+                  'AI products',
+                  'mobile apps',
+                  'hackathon winners',
+                  'secure platforms',
+                  'full-stack tools',
+                  'real software',
+                ]}
+                interval={2400}
+                className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 via-violet-400 to-purple-500"
+              />
+            </p>
+
+            <p className="mt-5 text-neutral-400 text-base md:text-lg max-w-md leading-relaxed">
               Full-stack developer & cybersecurity researcher building AI-powered products.
               Project Lead at Code Box, building apps with real users.
             </p>
