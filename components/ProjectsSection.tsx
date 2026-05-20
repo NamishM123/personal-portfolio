@@ -2,85 +2,67 @@
 
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { InteractiveTravelCard } from '@/components/ui/3d-card'
+import { ArrowUpRight } from 'lucide-react'
 
-const projects = [
+interface Project {
+  title: string
+  subtitle: string
+  actionText: string
+  href: string
+  tags?: string[]
+  badge?: string
+}
+
+const projects: Project[] = [
   {
     title: 'Poly Problems',
     subtitle: 'Campus Reporting App · Code Box',
-    date: 'Dec 2025 – Present',
-    imageUrl:
-      'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070&auto=format&fit=crop',
-    actionText: 'Visit Poly Problems →',
+    actionText: 'Visit Poly Problems',
     href: 'https://www.polyproblems.com/',
     tags: ['React Native', 'Expo', 'Supabase', 'AI'],
-    badge: undefined,
   },
   {
     title: 'Starly',
     subtitle: 'AI Mock Interview Platform',
-    date: 'Apr 2026 – Present',
-    imageUrl:
-      'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=2076&auto=format&fit=crop',
     actionText: 'Hackathon Winner',
     href: '#',
     tags: ['Groq API', 'Deepgram', 'Hugging Face', 'Python'],
-    badge: '2nd Place — Poly-Prompt Hackathon',
+    badge: '2nd — Poly-Prompt',
   },
   {
     title: 'Settlr',
     subtitle: 'Map-Based Housing App',
-    date: 'Mar 2026 – Present',
-    imageUrl:
-      'https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=2073&auto=format&fit=crop',
-    actionText: 'Open Settlr →',
+    actionText: 'Open Settlr',
     href: 'https://housing-app-delta.vercel.app/',
     tags: ['Next.js', 'Maps API', 'Geospatial', 'TypeScript'],
-    badge: undefined,
   },
   {
     title: 'Recipe Vision',
     subtitle: 'AI Recipe Generator from Photos',
-    date: '2025',
-    imageUrl:
-      'https://images.unsplash.com/photo-1490645935967-10de6ba17061?q=80&w=2053&auto=format&fit=crop',
-    actionText: 'Try it →',
+    actionText: 'Try it',
     href: 'https://recepie-ingridients-aske.vercel.app/',
     tags: ['AI Vision', 'Image Gen', 'Next.js'],
-    badge: undefined,
   },
   {
     title: 'Seagull',
     subtitle: 'TRT / HRT Companion App',
-    date: '2025',
-    imageUrl:
-      'https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=2070&auto=format&fit=crop',
-    actionText: 'View App →',
+    actionText: 'View App',
     href: 'https://vercel.com/namishm123s-projects/raccoon',
     tags: ['Health Tech', 'React', 'TypeScript'],
-    badge: undefined,
   },
   {
     title: 'Benu',
     subtitle: 'AI Restaurant Ordering Platform',
-    date: 'Dec 2025 – Present',
-    imageUrl:
-      'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=2070&auto=format&fit=crop',
     actionText: 'AI Team Project',
     href: '#',
     tags: ['Next.js 15', 'OpenAI', 'React 19', 'Realtime'],
-    badge: undefined,
   },
   {
     title: 'FLEX',
     subtitle: 'Workout Tracking App',
-    date: 'Jan 2025 – Present',
-    imageUrl:
-      'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=2070&auto=format&fit=crop',
     actionText: 'Progressive Overload Engine',
     href: '#',
     tags: ['React', 'REST API', 'JWT', 'Tailwind'],
-    badge: undefined,
   },
 ]
 
@@ -94,7 +76,7 @@ export function ProjectsSection() {
         ref={titleRef}
         initial={{ opacity: 0, y: 20 }}
         animate={titleInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.7 }}
+        transition={{ duration: 0.6 }}
         className="mb-16"
       >
         <p className="text-indigo-400 font-mono text-sm tracking-widest uppercase mb-3">
@@ -106,61 +88,60 @@ export function ProjectsSection() {
         </p>
       </motion.div>
 
-      <div
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
-        style={{ perspective: '1200px' }}
-      >
-        {projects.map((project, index) => (
-          <ProjectEntry key={project.title} project={project} index={index} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {projects.map((project, i) => (
+          <ProjectCard key={project.title} project={project} index={i} />
         ))}
       </div>
     </section>
   )
 }
 
-function ProjectEntry({
-  project,
-  index,
-}: {
-  project: (typeof projects)[0]
-  index: number
-}) {
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-80px' })
-
+function ProjectCard({ project, index }: { project: Project; index: number }) {
   return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 80, scale: 0.86, filter: 'blur(14px)' }}
-      animate={
-        inView
-          ? { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }
-          : {}
-      }
-      transition={{
-        duration: 1,
-        delay: index * 0.12,
-        ease: [0.21, 0.47, 0.32, 0.98],
-      }}
-      className={inView ? 'card-glow-in rounded-2xl' : 'rounded-2xl'}
+    <a
+      href={project.href}
+      target={project.href !== '#' ? '_blank' : undefined}
+      rel="noopener noreferrer"
+      className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_20px_60px_-20px_rgba(0,0,0,0.6)] transition-all hover:border-indigo-400/40 hover:bg-white/[0.07]"
     >
-      <InteractiveTravelCard
-        title={project.title}
-        subtitle={project.subtitle}
-        imageUrl={project.imageUrl}
-        actionText={project.actionText}
-        href={project.href}
-        tags={project.tags}
-        badge={project.badge}
-        revealed={inView}
-        revealDelay={index * 0.12 + 0.25}
-        onActionClick={
-          project.href !== '#'
-            ? () => window.open(project.href, '_blank')
-            : undefined
-        }
-        className="w-full"
-      />
-    </motion.div>
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_30%_0%,rgba(255,255,255,0.08),transparent_55%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-indigo-500/[0.06]" />
+
+      <div className="relative flex flex-col h-full">
+        <div className="flex items-start justify-between mb-4">
+          <span className="font-mono text-xs tracking-widest text-neutral-500">
+            {String(index + 1).padStart(2, '0')}
+          </span>
+          <ArrowUpRight className="h-4 w-4 text-neutral-500 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-white" />
+        </div>
+
+        {project.badge && (
+          <span className="mb-3 inline-block w-fit rounded-full border border-yellow-400/30 bg-yellow-500/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-widest text-yellow-300 backdrop-blur-sm">
+            ★ {project.badge}
+          </span>
+        )}
+
+        <h3 className="text-xl font-bold text-white">{project.title}</h3>
+        <p className="mt-1 text-sm text-neutral-400">{project.subtitle}</p>
+
+        {project.tags && project.tags.length > 0 && (
+          <div className="mt-4 flex flex-wrap gap-1.5">
+            {project.tags.map((tag) => (
+              <span
+                key={tag}
+                className="rounded-md border border-white/10 bg-white/[0.04] px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-neutral-300 backdrop-blur-sm"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+
+        <p className="mt-5 text-sm font-medium text-indigo-400 group-hover:text-indigo-300">
+          {project.actionText} →
+        </p>
+      </div>
+    </a>
   )
 }

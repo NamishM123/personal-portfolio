@@ -61,7 +61,7 @@ export function ExperienceSection() {
         ref={titleRef}
         initial={{ opacity: 0, y: 20 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.7 }}
+        transition={{ duration: 0.6 }}
         className="mb-16"
       >
         <p className="text-indigo-400 font-mono text-sm tracking-widest uppercase mb-3">
@@ -76,76 +76,43 @@ export function ExperienceSection() {
 
         <div className="space-y-8">
           {experiences.map((exp, i) => (
-            <ExperienceCard key={i} exp={exp} index={i} />
+            <div
+              key={i}
+              className={`relative md:ml-16 overflow-hidden rounded-2xl border ${exp.border} bg-white/[0.04] p-6 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_20px_60px_-20px_rgba(0,0,0,0.6)]`}
+            >
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_30%_0%,rgba(255,255,255,0.08),transparent_55%)]" />
+              <div className={`pointer-events-none absolute inset-0 ${exp.bg}`} />
+
+              <div
+                className={`absolute -left-[2.85rem] top-6 w-3 h-3 rounded-full border-2 border-neutral-800 bg-neutral-950 hidden md:block ring-2 ring-offset-2 ring-offset-black ${exp.color.replace(
+                  'text-',
+                  'ring-'
+                )}`}
+              />
+
+              <div className="relative">
+                <div className="flex items-start gap-3 mb-4">
+                  <span className={exp.color}>{exp.icon}</span>
+                  <div>
+                    <h3 className="font-bold text-white text-lg">{exp.role}</h3>
+                    <p className="text-neutral-400 text-sm">{exp.company}</p>
+                    <p className="text-neutral-600 text-xs font-mono mt-0.5">{exp.period}</p>
+                  </div>
+                </div>
+
+                <ul className="space-y-2">
+                  {exp.bullets.map((b, j) => (
+                    <li key={j} className="flex gap-2 text-sm text-neutral-300">
+                      <span className="text-neutral-600 mt-1 shrink-0">·</span>
+                      <span>{b}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           ))}
         </div>
       </div>
     </section>
-  )
-}
-
-function ExperienceCard({ exp, index }: { exp: typeof experiences[0]; index: number }) {
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-80px' })
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 60, scale: 0.9, filter: 'blur(12px)' }}
-      animate={
-        inView
-          ? { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }
-          : {}
-      }
-      transition={{
-        duration: 0.95,
-        delay: index * 0.15,
-        ease: [0.21, 0.47, 0.32, 0.98],
-      }}
-      className={`relative md:ml-16 rounded-2xl border ${exp.border} ${exp.bg} p-6 ${
-        inView ? 'card-glow-in' : ''
-      }`}
-    >
-      {/* Timeline dot */}
-      <motion.div
-        initial={{ scale: 0, opacity: 0 }}
-        animate={inView ? { scale: 1, opacity: 1 } : {}}
-        transition={{ duration: 0.5, delay: index * 0.15 + 0.4, ease: 'backOut' }}
-        className={`absolute -left-[2.85rem] top-6 w-3 h-3 rounded-full border-2 border-neutral-800 bg-neutral-950 hidden md:block ring-2 ring-offset-2 ring-offset-black ${exp.color.replace('text-', 'ring-')}`}
-      />
-
-      <div className="flex items-start gap-3 mb-4">
-        <span className={exp.color}>{exp.icon}</span>
-        <div>
-          <h3
-            className={`font-bold text-white text-lg ${inView ? 'glitch-in' : ''}`}
-            style={inView ? { animationDelay: `${index * 0.15 + 0.1}s` } : undefined}
-          >
-            {exp.role}
-          </h3>
-          <p className="text-neutral-400 text-sm">{exp.company}</p>
-          <p className="text-neutral-600 text-xs font-mono mt-0.5">{exp.period}</p>
-        </div>
-      </div>
-
-      <ul className="space-y-2">
-        {exp.bullets.map((b, i) => (
-          <motion.li
-            key={i}
-            initial={{ opacity: 0, x: -10 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{
-              duration: 0.4,
-              delay: index * 0.15 + 0.5 + i * 0.06,
-              ease: 'easeOut',
-            }}
-            className="flex gap-2 text-sm text-neutral-300"
-          >
-            <span className="text-neutral-600 mt-1 shrink-0">·</span>
-            <span>{b}</span>
-          </motion.li>
-        ))}
-      </ul>
-    </motion.div>
   )
 }
