@@ -3,6 +3,7 @@
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { InteractiveTravelCard } from '@/components/ui/3d-card'
+import { SpineBackground } from '@/components/ui/spine-background'
 
 const projects = [
   {
@@ -73,6 +74,7 @@ const projects = [
 export function ProjectsSection() {
   const titleRef = useRef(null)
   const titleInView = useInView(titleRef, { once: true })
+  const gridRef = useRef<HTMLDivElement>(null)
 
   return (
     <section className="py-24 px-8 md:px-16 max-w-7xl mx-auto" id="projects">
@@ -93,26 +95,31 @@ export function ProjectsSection() {
       </motion.div>
 
       <div
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10"
-        style={{ perspective: '1600px' }}
+        ref={gridRef}
+        className="relative"
+        style={{ perspective: '1800px' }}
       >
-        {projects.map((project, index) => (
-          <InteractiveTravelCard
-            key={project.title}
-            title={project.title}
-            subtitle={project.subtitle}
-            actionText={project.actionText}
-            href={project.href}
-            tags={project.tags}
-            badge={project.badge}
-            index={index}
-            onActionClick={
-              project.href !== '#'
-                ? () => window.open(project.href, '_blank')
-                : undefined
-            }
-          />
-        ))}
+        <SpineBackground targetRef={gridRef} />
+
+        <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+          {projects.map((project, index) => (
+            <InteractiveTravelCard
+              key={project.title}
+              title={project.title}
+              subtitle={project.subtitle}
+              actionText={project.actionText}
+              href={project.href}
+              tags={project.tags}
+              badge={project.badge}
+              index={index}
+              onActionClick={
+                project.href !== '#'
+                  ? () => window.open(project.href, '_blank')
+                  : undefined
+              }
+            />
+          ))}
+        </div>
       </div>
     </section>
   )

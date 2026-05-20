@@ -3,6 +3,7 @@
 import { useRef } from 'react'
 import { motion, useInView, useScroll, useSpring, useTransform } from 'framer-motion'
 import { Shield, Code2, Bot } from 'lucide-react'
+import { SpineBackground } from '@/components/ui/spine-background'
 
 const experiences = [
   {
@@ -54,6 +55,7 @@ const experiences = [
 export function ExperienceSection() {
   const titleRef = useRef(null)
   const inView = useInView(titleRef, { once: true })
+  const stackRef = useRef<HTMLDivElement>(null)
 
   return (
     <section className="py-24 px-8 md:px-16 max-w-7xl mx-auto" id="experience">
@@ -70,11 +72,13 @@ export function ExperienceSection() {
         <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Experience</h2>
       </motion.div>
 
-      <div className="relative" style={{ perspective: '1600px' }}>
-        {/* Timeline line */}
-        <div className="absolute left-6 top-0 bottom-0 w-px bg-neutral-800 hidden md:block" />
+      <div ref={stackRef} className="relative" style={{ perspective: '1800px' }}>
+        <SpineBackground targetRef={stackRef} count={32} />
 
-        <div className="space-y-10">
+        {/* Timeline line */}
+        <div className="absolute left-6 top-0 bottom-0 w-px bg-neutral-800 hidden md:block z-10" />
+
+        <div className="relative z-10 space-y-10">
           {experiences.map((exp, i) => (
             <ExperienceCard key={i} exp={exp} index={i} />
           ))}
@@ -124,13 +128,7 @@ function ExperienceCard({ exp, index }: { exp: typeof experiences[0]; index: num
       <div className="flex items-start gap-3 mb-4">
         <span className={exp.color}>{exp.icon}</span>
         <div>
-          <h3
-            data-text={exp.role}
-            className={`glitch font-bold text-white text-lg ${inView ? 'glitch-in' : ''}`}
-            style={inView ? { animationDelay: `${index * 0.15 + 0.1}s` } : undefined}
-          >
-            {exp.role}
-          </h3>
+          <h3 className="font-bold text-white text-lg">{exp.role}</h3>
           <p className="text-neutral-400 text-sm">{exp.company}</p>
           <p className="text-neutral-600 text-xs font-mono mt-0.5">{exp.period}</p>
         </div>

@@ -160,9 +160,8 @@ export const InteractiveTravelCard = React.forwardRef<
                 </span>
               )}
               <h2
-                data-text={title}
                 style={{ transform: "translateZ(55px)" }}
-                className="glitch text-3xl font-black uppercase leading-[0.95] tracking-tight md:text-4xl"
+                className="text-3xl font-black uppercase leading-[0.95] tracking-tight text-white md:text-4xl"
               >
                 {title}
               </h2>
