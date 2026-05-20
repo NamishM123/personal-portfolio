@@ -103,40 +103,45 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
       href={project.href}
       target={project.href !== '#' ? '_blank' : undefined}
       rel="noopener noreferrer"
-      className="group relative flex flex-col rounded-2xl border border-neutral-800 bg-neutral-900/40 p-6 transition-colors hover:border-indigo-500/50 hover:bg-neutral-900/70"
+      className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_20px_60px_-20px_rgba(0,0,0,0.6)] transition-all hover:border-indigo-400/40 hover:bg-white/[0.07]"
     >
-      <div className="flex items-start justify-between mb-4">
-        <span className="font-mono text-xs tracking-widest text-neutral-500">
-          {String(index + 1).padStart(2, '0')}
-        </span>
-        <ArrowUpRight className="h-4 w-4 text-neutral-500 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-white" />
-      </div>
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_30%_0%,rgba(255,255,255,0.08),transparent_55%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-indigo-500/[0.06]" />
 
-      {project.badge && (
-        <span className="mb-3 inline-block w-fit rounded-full border border-yellow-400/30 bg-yellow-500/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-widest text-yellow-300">
-          ★ {project.badge}
-        </span>
-      )}
-
-      <h3 className="text-xl font-bold text-white">{project.title}</h3>
-      <p className="mt-1 text-sm text-neutral-400">{project.subtitle}</p>
-
-      {project.tags && project.tags.length > 0 && (
-        <div className="mt-4 flex flex-wrap gap-1.5">
-          {project.tags.map((tag) => (
-            <span
-              key={tag}
-              className="rounded-md border border-neutral-800 bg-neutral-900 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-neutral-400"
-            >
-              {tag}
-            </span>
-          ))}
+      <div className="relative flex flex-col h-full">
+        <div className="flex items-start justify-between mb-4">
+          <span className="font-mono text-xs tracking-widest text-neutral-500">
+            {String(index + 1).padStart(2, '0')}
+          </span>
+          <ArrowUpRight className="h-4 w-4 text-neutral-500 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-white" />
         </div>
-      )}
 
-      <p className="mt-5 text-sm font-medium text-indigo-400 group-hover:text-indigo-300">
-        {project.actionText} →
-      </p>
+        {project.badge && (
+          <span className="mb-3 inline-block w-fit rounded-full border border-yellow-400/30 bg-yellow-500/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-widest text-yellow-300 backdrop-blur-sm">
+            ★ {project.badge}
+          </span>
+        )}
+
+        <h3 className="text-xl font-bold text-white">{project.title}</h3>
+        <p className="mt-1 text-sm text-neutral-400">{project.subtitle}</p>
+
+        {project.tags && project.tags.length > 0 && (
+          <div className="mt-4 flex flex-wrap gap-1.5">
+            {project.tags.map((tag) => (
+              <span
+                key={tag}
+                className="rounded-md border border-white/10 bg-white/[0.04] px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-neutral-300 backdrop-blur-sm"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+
+        <p className="mt-5 text-sm font-medium text-indigo-400 group-hover:text-indigo-300">
+          {project.actionText} →
+        </p>
+      </div>
     </a>
   )
 }

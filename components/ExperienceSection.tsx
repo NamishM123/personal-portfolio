@@ -78,8 +78,11 @@ export function ExperienceSection() {
           {experiences.map((exp, i) => (
             <div
               key={i}
-              className={`relative md:ml-16 rounded-2xl border ${exp.border} ${exp.bg} p-6`}
+              className={`relative md:ml-16 overflow-hidden rounded-2xl border ${exp.border} bg-white/[0.04] p-6 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_20px_60px_-20px_rgba(0,0,0,0.6)]`}
             >
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_30%_0%,rgba(255,255,255,0.08),transparent_55%)]" />
+              <div className={`pointer-events-none absolute inset-0 ${exp.bg}`} />
+
               <div
                 className={`absolute -left-[2.85rem] top-6 w-3 h-3 rounded-full border-2 border-neutral-800 bg-neutral-950 hidden md:block ring-2 ring-offset-2 ring-offset-black ${exp.color.replace(
                   'text-',
@@ -87,23 +90,25 @@ export function ExperienceSection() {
                 )}`}
               />
 
-              <div className="flex items-start gap-3 mb-4">
-                <span className={exp.color}>{exp.icon}</span>
-                <div>
-                  <h3 className="font-bold text-white text-lg">{exp.role}</h3>
-                  <p className="text-neutral-400 text-sm">{exp.company}</p>
-                  <p className="text-neutral-600 text-xs font-mono mt-0.5">{exp.period}</p>
+              <div className="relative">
+                <div className="flex items-start gap-3 mb-4">
+                  <span className={exp.color}>{exp.icon}</span>
+                  <div>
+                    <h3 className="font-bold text-white text-lg">{exp.role}</h3>
+                    <p className="text-neutral-400 text-sm">{exp.company}</p>
+                    <p className="text-neutral-600 text-xs font-mono mt-0.5">{exp.period}</p>
+                  </div>
                 </div>
-              </div>
 
-              <ul className="space-y-2">
-                {exp.bullets.map((b, j) => (
-                  <li key={j} className="flex gap-2 text-sm text-neutral-300">
-                    <span className="text-neutral-600 mt-1 shrink-0">·</span>
-                    <span>{b}</span>
-                  </li>
-                ))}
-              </ul>
+                <ul className="space-y-2">
+                  {exp.bullets.map((b, j) => (
+                    <li key={j} className="flex gap-2 text-sm text-neutral-300">
+                      <span className="text-neutral-600 mt-1 shrink-0">·</span>
+                      <span>{b}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           ))}
         </div>
