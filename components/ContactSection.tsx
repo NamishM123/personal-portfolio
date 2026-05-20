@@ -6,6 +6,7 @@ export function ContactSection() {
   return (
     <section id="contact" className="relative">
       <Hero
+        transparent
         trustBadge={{
           text: 'Available for internships & collaborations',
           icons: ['◆'],
