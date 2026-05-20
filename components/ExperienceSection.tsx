@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef } from 'react'
-import { motion, useInView } from 'framer-motion'
+import { motion, useInView, useScroll, useSpring, useTransform } from 'framer-motion'
 import { Shield, Code2, Bot } from 'lucide-react'
 
 const experiences = [
@@ -70,11 +70,11 @@ export function ExperienceSection() {
         <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Experience</h2>
       </motion.div>
 
-      <div className="relative">
+      <div className="relative" style={{ perspective: '1600px' }}>
         {/* Timeline line */}
         <div className="absolute left-6 top-0 bottom-0 w-px bg-neutral-800 hidden md:block" />
 
-        <div className="space-y-8">
+        <div className="space-y-10">
           {experiences.map((exp, i) => (
             <ExperienceCard key={i} exp={exp} index={i} />
           ))}
@@ -85,24 +85,31 @@ export function ExperienceSection() {
 }
 
 function ExperienceCard({ exp, index }: { exp: typeof experiences[0]; index: number }) {
-  const ref = useRef(null)
+  const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
+
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ['start end', 'end start'],
+  })
+  const smooth = useSpring(scrollYProgress, { stiffness: 80, damping: 22, mass: 0.5 })
+  const rotateY = useTransform(smooth, [0, 0.5, 1], [35, 0, -25])
+  const rotateX = useTransform(smooth, [0, 0.5, 1], [12, 0, -6])
+  const scale = useTransform(smooth, [0, 0.5, 1], [0.88, 1, 0.92])
+  const opacity = useTransform(smooth, [0, 0.2, 0.8, 1], [0.2, 1, 1, 0.4])
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 60, scale: 0.9, filter: 'blur(12px)' }}
-      animate={
-        inView
-          ? { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }
-          : {}
-      }
-      transition={{
-        duration: 0.95,
-        delay: index * 0.15,
-        ease: [0.21, 0.47, 0.32, 0.98],
+      style={{
+        rotateY,
+        rotateX,
+        scale,
+        opacity,
+        transformStyle: 'preserve-3d',
+        transformPerspective: 1400,
       }}
-      className={`relative md:ml-16 rounded-2xl border ${exp.border} ${exp.bg} p-6 ${
+      className={`relative md:ml-16 rounded-2xl border ${exp.border} ${exp.bg} backdrop-blur-xl p-6 ${
         inView ? 'card-glow-in' : ''
       }`}
     >
@@ -118,7 +125,8 @@ function ExperienceCard({ exp, index }: { exp: typeof experiences[0]; index: num
         <span className={exp.color}>{exp.icon}</span>
         <div>
           <h3
-            className={`font-bold text-white text-lg ${inView ? 'glitch-in' : ''}`}
+            data-text={exp.role}
+            className={`glitch font-bold text-white text-lg ${inView ? 'glitch-in' : ''}`}
             style={inView ? { animationDelay: `${index * 0.15 + 0.1}s` } : undefined}
           >
             {exp.role}

@@ -9,9 +9,7 @@ const projects = [
     title: 'Poly Problems',
     subtitle: 'Campus Reporting App · Code Box',
     date: 'Dec 2025 – Present',
-    imageUrl:
-      'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070&auto=format&fit=crop',
-    actionText: 'Visit Poly Problems →',
+    actionText: 'Visit Poly Problems',
     href: 'https://www.polyproblems.com/',
     tags: ['React Native', 'Expo', 'Supabase', 'AI'],
     badge: undefined,
@@ -20,20 +18,16 @@ const projects = [
     title: 'Starly',
     subtitle: 'AI Mock Interview Platform',
     date: 'Apr 2026 – Present',
-    imageUrl:
-      'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=2076&auto=format&fit=crop',
     actionText: 'Hackathon Winner',
     href: '#',
     tags: ['Groq API', 'Deepgram', 'Hugging Face', 'Python'],
-    badge: '2nd Place — Poly-Prompt Hackathon',
+    badge: '2nd — Poly-Prompt',
   },
   {
     title: 'Settlr',
     subtitle: 'Map-Based Housing App',
     date: 'Mar 2026 – Present',
-    imageUrl:
-      'https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=2073&auto=format&fit=crop',
-    actionText: 'Open Settlr →',
+    actionText: 'Open Settlr',
     href: 'https://housing-app-delta.vercel.app/',
     tags: ['Next.js', 'Maps API', 'Geospatial', 'TypeScript'],
     badge: undefined,
@@ -42,9 +36,7 @@ const projects = [
     title: 'Recipe Vision',
     subtitle: 'AI Recipe Generator from Photos',
     date: '2025',
-    imageUrl:
-      'https://images.unsplash.com/photo-1490645935967-10de6ba17061?q=80&w=2053&auto=format&fit=crop',
-    actionText: 'Try it →',
+    actionText: 'Try it',
     href: 'https://recepie-ingridients-aske.vercel.app/',
     tags: ['AI Vision', 'Image Gen', 'Next.js'],
     badge: undefined,
@@ -53,9 +45,7 @@ const projects = [
     title: 'Seagull',
     subtitle: 'TRT / HRT Companion App',
     date: '2025',
-    imageUrl:
-      'https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=2070&auto=format&fit=crop',
-    actionText: 'View App →',
+    actionText: 'View App',
     href: 'https://vercel.com/namishm123s-projects/raccoon',
     tags: ['Health Tech', 'React', 'TypeScript'],
     badge: undefined,
@@ -64,8 +54,6 @@ const projects = [
     title: 'Benu',
     subtitle: 'AI Restaurant Ordering Platform',
     date: 'Dec 2025 – Present',
-    imageUrl:
-      'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=2070&auto=format&fit=crop',
     actionText: 'AI Team Project',
     href: '#',
     tags: ['Next.js 15', 'OpenAI', 'React 19', 'Realtime'],
@@ -75,8 +63,6 @@ const projects = [
     title: 'FLEX',
     subtitle: 'Workout Tracking App',
     date: 'Jan 2025 – Present',
-    imageUrl:
-      'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=2070&auto=format&fit=crop',
     actionText: 'Progressive Overload Engine',
     href: '#',
     tags: ['React', 'REST API', 'JWT', 'Tailwind'],
@@ -107,60 +93,27 @@ export function ProjectsSection() {
       </motion.div>
 
       <div
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
-        style={{ perspective: '1200px' }}
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10"
+        style={{ perspective: '1600px' }}
       >
         {projects.map((project, index) => (
-          <ProjectEntry key={project.title} project={project} index={index} />
+          <InteractiveTravelCard
+            key={project.title}
+            title={project.title}
+            subtitle={project.subtitle}
+            actionText={project.actionText}
+            href={project.href}
+            tags={project.tags}
+            badge={project.badge}
+            index={index}
+            onActionClick={
+              project.href !== '#'
+                ? () => window.open(project.href, '_blank')
+                : undefined
+            }
+          />
         ))}
       </div>
     </section>
-  )
-}
-
-function ProjectEntry({
-  project,
-  index,
-}: {
-  project: (typeof projects)[0]
-  index: number
-}) {
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-80px' })
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 80, scale: 0.86, filter: 'blur(14px)' }}
-      animate={
-        inView
-          ? { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }
-          : {}
-      }
-      transition={{
-        duration: 1,
-        delay: index * 0.12,
-        ease: [0.21, 0.47, 0.32, 0.98],
-      }}
-      className={inView ? 'card-glow-in rounded-2xl' : 'rounded-2xl'}
-    >
-      <InteractiveTravelCard
-        title={project.title}
-        subtitle={project.subtitle}
-        imageUrl={project.imageUrl}
-        actionText={project.actionText}
-        href={project.href}
-        tags={project.tags}
-        badge={project.badge}
-        revealed={inView}
-        revealDelay={index * 0.12 + 0.25}
-        onActionClick={
-          project.href !== '#'
-            ? () => window.open(project.href, '_blank')
-            : undefined
-        }
-        className="w-full"
-      />
-    </motion.div>
   )
 }

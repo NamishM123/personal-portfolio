@@ -1,22 +1,29 @@
 "use client";
 
 import * as React from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import {
+  motion,
+  useMotionValue,
+  useScroll,
+  useSpring,
+  useTransform,
+  MotionValue,
+} from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface InteractiveTravelCardProps {
   title: string;
   subtitle: string;
-  imageUrl: string;
+  imageUrl?: string;
   actionText: string;
   href: string;
   onActionClick?: () => void;
   className?: string;
   tags?: string[];
   badge?: string;
-  revealed?: boolean;
-  revealDelay?: number;
+  index?: number;
+  scrollProgress?: MotionValue<number>;
 }
 
 export const InteractiveTravelCard = React.forwardRef<
@@ -27,33 +34,49 @@ export const InteractiveTravelCard = React.forwardRef<
     {
       title,
       subtitle,
-      imageUrl,
       actionText,
       href,
       onActionClick,
       className,
       tags,
       badge,
-      revealed,
-      revealDelay = 0,
+      index,
     },
     ref
   ) => {
+    const innerRef = React.useRef<HTMLDivElement | null>(null);
+    React.useImperativeHandle(ref, () => innerRef.current as HTMLDivElement);
+
+    const { scrollYProgress } = useScroll({
+      target: innerRef,
+      offset: ["start end", "end start"],
+    });
+
+    const smooth = useSpring(scrollYProgress, {
+      stiffness: 90,
+      damping: 22,
+      mass: 0.4,
+    });
+
+    const rotateY = useTransform(smooth, [0, 0.5, 1], [55, 0, -55]);
+    const rotateX = useTransform(smooth, [0, 0.5, 1], [18, 0, -10]);
+    const scrollScale = useTransform(smooth, [0, 0.5, 1], [0.78, 1, 0.85]);
+    const scrollOpacity = useTransform(smooth, [0, 0.25, 0.75, 1], [0, 1, 1, 0.35]);
+    const yShift = useTransform(smooth, [0, 0.5, 1], [80, 0, -40]);
+    const glowOpacity = useTransform(smooth, [0, 0.5, 1], [0, 0.55, 0.1]);
+
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
-
-    const springConfig = { damping: 15, stiffness: 150 };
-    const springX = useSpring(mouseX, springConfig);
-    const springY = useSpring(mouseY, springConfig);
-
-    const rotateX = useTransform(springY, [-0.5, 0.5], ["10.5deg", "-10.5deg"]);
-    const rotateY = useTransform(springX, [-0.5, 0.5], ["-10.5deg", "10.5deg"]);
+    const springConfig = { damping: 18, stiffness: 200 };
+    const tiltX = useSpring(mouseX, springConfig);
+    const tiltY = useSpring(mouseY, springConfig);
+    const hoverRotateX = useTransform(tiltY, [-0.5, 0.5], ["8deg", "-8deg"]);
+    const hoverRotateY = useTransform(tiltX, [-0.5, 0.5], ["-8deg", "8deg"]);
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
       const rect = e.currentTarget.getBoundingClientRect();
-      const { width, height, left, top } = rect;
-      mouseX.set((e.clientX - left) / width - 0.5);
-      mouseY.set((e.clientY - top) / height - 0.5);
+      mouseX.set((e.clientX - rect.left) / rect.width - 0.5);
+      mouseY.set((e.clientY - rect.top) / rect.height - 0.5);
     };
 
     const handleMouseLeave = () => {
@@ -61,106 +84,125 @@ export const InteractiveTravelCard = React.forwardRef<
       mouseY.set(0);
     };
 
+    const indexLabel =
+      typeof index === "number" ? String(index + 1).padStart(2, "0") : null;
+
     return (
       <motion.div
-        ref={ref}
+        ref={innerRef}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-        className={cn(
-          "relative h-[26rem] w-full rounded-2xl bg-transparent shadow-2xl border border-neutral-800",
-          className
-        )}
+        style={{
+          rotateY,
+          rotateX,
+          scale: scrollScale,
+          opacity: scrollOpacity,
+          y: yShift,
+          transformStyle: "preserve-3d",
+          transformPerspective: 1400,
+        }}
+        className={cn("relative h-[26rem] w-full", className)}
       >
-        <div
-          style={{ transform: "translateZ(50px)", transformStyle: "preserve-3d" }}
-          className="absolute inset-3 grid h-[calc(100%-1.5rem)] w-[calc(100%-1.5rem)] grid-rows-[1fr_auto] rounded-xl shadow-lg"
+        <motion.div
+          aria-hidden
+          style={{ opacity: glowOpacity }}
+          className="pointer-events-none absolute -inset-6 rounded-[2rem] bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.35),rgba(168,85,247,0.18)_40%,transparent_70%)] blur-2xl"
+        />
+
+        <motion.div
+          style={{
+            rotateX: hoverRotateX,
+            rotateY: hoverRotateY,
+            transformStyle: "preserve-3d",
+          }}
+          className="relative h-full w-full rounded-2xl border border-white/15 bg-white/[0.04] backdrop-blur-xl shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.08)]"
         >
-          {/* Background Image */}
-          <img
-            src={imageUrl}
-            alt={`${title} — ${subtitle}`}
-            className="absolute inset-0 h-full w-full rounded-xl object-cover"
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 rounded-2xl bg-[linear-gradient(135deg,rgba(255,255,255,0.08),transparent_40%,rgba(99,102,241,0.06)_70%,transparent)]"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-px rounded-[calc(1rem-1px)] [mask:linear-gradient(black,transparent_60%)] bg-gradient-to-b from-white/5 to-transparent"
           />
 
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 h-full w-full rounded-xl bg-gradient-to-b from-black/30 via-transparent to-black/80" />
-
-          {/* Content */}
-          <div className="relative flex flex-col justify-between rounded-xl p-5 text-white h-full">
-            {/* Header */}
+          <div
+            style={{ transform: "translateZ(60px)" }}
+            className="relative grid h-full grid-rows-[auto_1fr_auto] p-6 text-white"
+          >
             <div className="flex items-start justify-between">
-              <div className="flex-1 min-w-0">
-                {badge && (
-                  <motion.span
-                    style={{ transform: "translateZ(60px)" }}
-                    className="inline-block mb-2 px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-500/20 text-yellow-300 border border-yellow-400/30 backdrop-blur-sm"
-                  >
-                    🏆 {badge}
-                  </motion.span>
-                )}
-                <motion.h2
-                  style={{
-                    transform: "translateZ(50px)",
-                    ...(revealed ? { animationDelay: `${revealDelay}s` } : {}),
-                  }}
-                  className={cn(
-                    "text-2xl font-bold leading-tight",
-                    revealed && "glitch-in"
-                  )}
-                >
-                  {title}
-                </motion.h2>
-                <motion.p
-                  style={{ transform: "translateZ(40px)" }}
-                  className="text-sm font-light text-white/70 mt-0.5"
-                >
-                  {subtitle}
-                </motion.p>
-              </div>
+              {indexLabel && (
+                <span className="font-mono text-xs tracking-[0.3em] text-white/40">
+                  {indexLabel} /
+                </span>
+              )}
               <motion.a
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                whileHover={{ scale: 1.1, rotate: "2.5deg" }}
+                whileHover={{ scale: 1.1, rotate: "3deg" }}
                 whileTap={{ scale: 0.9 }}
                 aria-label={`Visit ${title}`}
-                style={{ transform: "translateZ(70px)" }}
-                className="ml-3 shrink-0 flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm ring-1 ring-inset ring-white/30 hover:bg-white/30 transition-colors"
+                style={{ transform: "translateZ(40px)" }}
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-white/5 backdrop-blur-md transition-colors hover:bg-white/15"
               >
-                <ArrowUpRight className="h-5 w-5 text-white" />
+                <ArrowUpRight className="h-4 w-4" />
               </motion.a>
             </div>
 
-            {/* Tags */}
-            {tags && tags.length > 0 && (
-              <motion.div
-                style={{ transform: "translateZ(45px)" }}
-                className="flex flex-wrap gap-1.5 mt-3"
+            <div className="flex flex-col justify-center">
+              {badge && (
+                <span
+                  style={{ transform: "translateZ(45px)" }}
+                  className="mb-3 inline-block w-fit rounded-full border border-yellow-400/30 bg-yellow-500/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-widest text-yellow-300 backdrop-blur-sm"
+                >
+                  ★ {badge}
+                </span>
+              )}
+              <h2
+                data-text={title}
+                style={{ transform: "translateZ(55px)" }}
+                className="glitch text-3xl font-black uppercase leading-[0.95] tracking-tight md:text-4xl"
               >
-                {tags.slice(0, 4).map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-2 py-0.5 rounded-md text-xs bg-black/30 text-white/70 backdrop-blur-sm border border-white/10"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </motion.div>
-            )}
+                {title}
+              </h2>
+              <p
+                style={{ transform: "translateZ(40px)" }}
+                className="mt-3 max-w-[90%] text-sm text-white/55"
+              >
+                {subtitle}
+              </p>
+            </div>
 
-            {/* Action button */}
-            <motion.button
-              onClick={onActionClick}
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.96 }}
-              style={{ transform: "translateZ(55px)" }}
-              className="mt-4 w-full rounded-lg py-3 text-center font-semibold text-white bg-white/10 backdrop-blur-md ring-1 ring-inset ring-white/20 hover:bg-white/20 transition-colors"
+            <div
+              style={{ transform: "translateZ(35px)" }}
+              className="flex flex-col gap-4"
             >
-              {actionText}
-            </motion.button>
+              {tags && tags.length > 0 && (
+                <div className="flex flex-wrap gap-1.5">
+                  {tags.slice(0, 4).map((tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-md border border-white/10 bg-white/[0.03] px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-white/60"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              <motion.button
+                onClick={onActionClick}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                className="group/btn flex w-full items-center justify-between rounded-lg border border-white/15 bg-white/[0.03] px-4 py-3 text-left text-sm font-medium text-white/90 backdrop-blur-md transition-colors hover:bg-white/10"
+              >
+                <span>{actionText}</span>
+                <ArrowUpRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
+              </motion.button>
+            </div>
           </div>
-        </div>
+        </motion.div>
       </motion.div>
     );
   }
