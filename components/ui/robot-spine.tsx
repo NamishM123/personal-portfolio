@@ -6,15 +6,15 @@ import { Environment } from '@react-three/drei'
 import type { Group } from 'three'
 import { type MotionValue } from 'framer-motion'
 
-const VERTEBRA_COUNT = 26
-const SPACING = 0.42
+const VERTEBRA_COUNT = 60
+const SPACING = 0.22
 
 function Vertebra({ y, index }: { y: number; index: number }) {
   // Tiny variation between vertebrae so the column feels organic
-  const torusRadius = 0.42 + Math.sin(index * 0.6) * 0.04
-  const tubeRadius = 0.16 + Math.cos(index * 0.4) * 0.02
-  const wingLength = 0.32 + Math.sin(index * 0.9) * 0.05
-  const tilt = Math.sin(index * 0.3) * 0.06
+  const torusRadius = 0.34 + Math.sin(index * 0.6) * 0.04
+  const tubeRadius = 0.11 + Math.cos(index * 0.4) * 0.015
+  const wingLength = 0.22 + Math.sin(index * 0.9) * 0.04
+  const tilt = Math.sin(index * 0.3) * 0.05
 
   return (
     <group position={[0, y, 0]} rotation={[tilt, 0, tilt * 0.5]}>
@@ -34,8 +34,8 @@ function Vertebra({ y, index }: { y: number; index: number }) {
       </mesh>
 
       {/* transverse processes (side wings) */}
-      <mesh position={[-0.55, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
-        <cylinderGeometry args={[0.07, 0.05, wingLength, 16]} />
+      <mesh position={[-0.42, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[0.05, 0.035, wingLength, 14]} />
         <meshPhysicalMaterial
           color="#262630"
           metalness={0.9}
@@ -44,8 +44,8 @@ function Vertebra({ y, index }: { y: number; index: number }) {
           envMapIntensity={1.2}
         />
       </mesh>
-      <mesh position={[0.55, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
-        <cylinderGeometry args={[0.07, 0.05, wingLength, 16]} />
+      <mesh position={[0.42, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[0.05, 0.035, wingLength, 14]} />
         <meshPhysicalMaterial
           color="#262630"
           metalness={0.9}
@@ -56,8 +56,8 @@ function Vertebra({ y, index }: { y: number; index: number }) {
       </mesh>
 
       {/* small endcaps on the wings */}
-      <mesh position={[-0.72, 0, 0]}>
-        <sphereGeometry args={[0.075, 16, 16]} />
+      <mesh position={[-0.55, 0, 0]}>
+        <sphereGeometry args={[0.055, 14, 14]} />
         <meshPhysicalMaterial
           color="#2a2a36"
           metalness={0.95}
@@ -65,8 +65,8 @@ function Vertebra({ y, index }: { y: number; index: number }) {
           clearcoat={1}
         />
       </mesh>
-      <mesh position={[0.72, 0, 0]}>
-        <sphereGeometry args={[0.075, 16, 16]} />
+      <mesh position={[0.55, 0, 0]}>
+        <sphereGeometry args={[0.055, 14, 14]} />
         <meshPhysicalMaterial
           color="#2a2a36"
           metalness={0.95}
@@ -76,8 +76,8 @@ function Vertebra({ y, index }: { y: number; index: number }) {
       </mesh>
 
       {/* spinous process — small bump on top */}
-      <mesh position={[0, 0.22, 0]}>
-        <coneGeometry args={[0.08, 0.18, 12]} />
+      <mesh position={[0, 0.16, 0]}>
+        <coneGeometry args={[0.055, 0.13, 10]} />
         <meshPhysicalMaterial
           color="#222230"
           metalness={0.92}
@@ -88,18 +88,18 @@ function Vertebra({ y, index }: { y: number; index: number }) {
 
       {/* glowing core — the "spinal cord" segment */}
       <mesh>
-        <sphereGeometry args={[0.09, 24, 24]} />
+        <sphereGeometry args={[0.065, 20, 20]} />
         <meshStandardMaterial
           color="#7c8aff"
           emissive="#6366f1"
-          emissiveIntensity={3.5}
+          emissiveIntensity={3.8}
           toneMapped={false}
         />
       </mesh>
 
       {/* thin connecting disc between vertebrae */}
       <mesh position={[0, SPACING / 2, 0]}>
-        <cylinderGeometry args={[0.18, 0.18, 0.06, 24]} />
+        <cylinderGeometry args={[0.13, 0.13, 0.04, 20]} />
         <meshPhysicalMaterial
           color="#0f0f18"
           metalness={0.8}

@@ -6,7 +6,7 @@ import { ArrowUpRight } from 'lucide-react'
 export interface DeckCardData {
   title: string
   subtitle: string
-  imageUrl: string
+  imageUrl?: string
   actionText: string
   href: string
   tags?: string[]
@@ -20,45 +20,46 @@ interface DeckCardProps {
   progress: MotionValue<number>
 }
 
+const ORBIT_RADIUS = 620
+const DEPTH_RADIUS = 460
+
+/**
+ * Orbital deck card — each card sits at a fixed angle on a wheel that rotates
+ * around the vertical (spine) axis. As scroll progresses the whole wheel
+ * rotates; cards behind the spine are dimmed/blurred but never deleted, so the
+ * deck wraps around continuously instead of fading out.
+ */
 export function DeckCard({ data, index, total, progress }: DeckCardProps) {
-  const segment = 1 / total
-  const peak = (index + 0.5) * segment
+  // Each card's angular position relative to camera, normalized to [-π, π].
+  // At progress=0, card 0 is at angle 0 (front). As progress → 1 the wheel
+  // makes one full revolution so each card crosses the front exactly once.
+  const angle = useTransform(progress, (p) => {
+    let a = (index / total - p) * Math.PI * 2
+    while (a > Math.PI) a -= Math.PI * 2
+    while (a < -Math.PI) a += Math.PI * 2
+    return a
+  })
 
-  // Wide windows so several cards overlap on screen at once
-  const enter = Math.max(0, peak - segment * 1.1)
-  const exit = Math.min(1, peak + segment * 1.1)
-  const enterHold = peak - segment * 0.25
-  const exitHold = peak + segment * 0.25
-
-  // Position arc: bottom-right → centered → top-left
-  const x = useTransform(progress, [enter, peak, exit], [620, 0, -640])
-  const y = useTransform(progress, [enter, peak, exit], [340, 0, -340])
-  const z = useTransform(progress, [enter, peak, exit], [-320, 0, -380])
-
-  // Gentler rotation than before — the video isn't actually that aggressive
-  const rotateY = useTransform(progress, [enter, peak, exit], [-38, 0, 32])
-  const rotateX = useTransform(progress, [enter, peak, exit], [14, 0, -10])
-  const rotateZ = useTransform(progress, [enter, peak, exit], [-8, 0, 6])
-
-  // Hold focused size at the peak window so the card sits readable for longer
-  const scale = useTransform(
-    progress,
-    [enter, enterHold, exitHold, exit],
-    [0.82, 1, 1, 0.78]
-  )
-
-  const opacity = useTransform(
-    progress,
-    [enter, enter + segment * 0.18, exit - segment * 0.18, exit],
-    [0, 1, 1, 0]
-  )
-
-  // Heavier motion blur at the edges, sharp focus only at the peak
-  const filter = useTransform(
-    progress,
-    [enter, enterHold, peak, exitHold, exit],
-    ['blur(14px)', 'blur(2px)', 'blur(0px)', 'blur(2px)', 'blur(14px)']
-  )
+  const x = useTransform(angle, (a) => Math.sin(a) * ORBIT_RADIUS)
+  // z brings card to 0 when at front, pushes it -2*DEPTH when at back
+  const z = useTransform(angle, (a) => (Math.cos(a) - 1) * DEPTH_RADIUS)
+  // small diagonal lift so motion echoes the bottom-right → top-left arc
+  const y = useTransform(angle, (a) => -Math.sin(a) * 90)
+  const rotateY = useTransform(angle, (a) => -a * (180 / Math.PI))
+  const rotateX = useTransform(angle, (a) => Math.sin(a) * 6)
+  const rotateZ = useTransform(angle, (a) => Math.sin(a) * -4)
+  const scale = useTransform(angle, (a) => 0.62 + Math.max(0, Math.cos(a)) * 0.42)
+  const opacity = useTransform(angle, (a) => {
+    const c = Math.cos(a)
+    if (c >= 0) return 1
+    // Behind the spine — fade but never fully vanish so wrap is continuous
+    return Math.max(0.05, 0.4 + c * 0.6)
+  })
+  const filter = useTransform(angle, (a) => {
+    const blur = Math.max(0, (1 - Math.cos(a)) * 6)
+    return `blur(${blur.toFixed(2)}px)`
+  })
+  const zIndex = useTransform(angle, (a) => Math.round(Math.cos(a) * 100))
 
   return (
     <motion.div
@@ -72,36 +73,23 @@ export function DeckCard({ data, index, total, progress }: DeckCardProps) {
         scale,
         opacity,
         filter,
+        zIndex,
         transformStyle: 'preserve-3d',
         transformPerspective: 1800,
       }}
       className="absolute h-[28rem] w-[22rem] md:h-[32rem] md:w-[30rem] lg:h-[36rem] lg:w-[36rem]"
     >
-      {/* Outer glow halo */}
-      <div className="pointer-events-none absolute -inset-4 rounded-[2.5rem] bg-[radial-gradient(circle_at_center,rgba(168,85,247,0.25),rgba(99,102,241,0.15)_40%,transparent_70%)] blur-2xl" />
+      {/* Soft outer halo */}
+      <div className="pointer-events-none absolute -inset-4 rounded-[2.5rem] bg-[radial-gradient(circle_at_center,rgba(168,85,247,0.22),rgba(99,102,241,0.12)_40%,transparent_70%)] blur-2xl" />
 
       <div className="relative h-full w-full overflow-hidden rounded-3xl">
-        {/* Hairline border + inner highlight */}
-        <div className="pointer-events-none absolute inset-0 z-30 rounded-3xl border border-white/25 shadow-[inset_0_1px_0_rgba(255,255,255,0.25),inset_0_-1px_0_rgba(255,255,255,0.05),0_50px_120px_-20px_rgba(0,0,0,0.7)]" />
+        {/* Hairline border + inset highlight */}
+        <div className="pointer-events-none absolute inset-0 z-30 rounded-3xl border border-white/25 shadow-[inset_0_1px_0_rgba(255,255,255,0.3),inset_0_-1px_0_rgba(255,255,255,0.05),0_50px_120px_-20px_rgba(0,0,0,0.7)]" />
 
-        {/* Faint image texture, very low opacity so it reads as glass not a photo */}
-        <div
-          aria-hidden
-          className="absolute inset-0 opacity-30"
-          style={{
-            backgroundImage: `url(${data.imageUrl})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            filter: 'saturate(1.4) blur(2px)',
-          }}
-        />
-
-        {/* Heavy backdrop blur to make it actually glassy */}
+        {/* Glass surface — no image, just backdrop blur + frost tint */}
         <div className="absolute inset-0 backdrop-blur-2xl" />
-
-        {/* Subtle frosted tint + radial highlight */}
-        <div className="absolute inset-0 bg-white/[0.04]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_0%,rgba(255,255,255,0.12),transparent_50%)]" />
+        <div className="absolute inset-0 bg-white/[0.05]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_0%,rgba(255,255,255,0.15),transparent_55%)]" />
         <div className="absolute inset-0 bg-gradient-to-br from-white/[0.06] via-transparent to-purple-500/10" />
 
         <div className="relative z-20 flex h-full flex-col justify-between p-7 text-white">

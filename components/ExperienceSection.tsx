@@ -141,34 +141,33 @@ function ExperienceDeckCard({
   total: number
   progress: MotionValue<number>
 }) {
-  const segment = 1 / total
-  const peak = (index + 0.5) * segment
-  const enter = Math.max(0, peak - segment * 1.1)
-  const exit = Math.min(1, peak + segment * 1.1)
-  const enterHold = peak - segment * 0.25
-  const exitHold = peak + segment * 0.25
+  // Orbital wrap — see deck-card.tsx for the geometry
+  const ORBIT_RADIUS = 620
+  const DEPTH_RADIUS = 460
 
-  const x = useTransform(progress, [enter, peak, exit], [620, 0, -640])
-  const y = useTransform(progress, [enter, peak, exit], [340, 0, -340])
-  const z = useTransform(progress, [enter, peak, exit], [-320, 0, -380])
-  const rotateY = useTransform(progress, [enter, peak, exit], [-38, 0, 32])
-  const rotateX = useTransform(progress, [enter, peak, exit], [14, 0, -10])
-  const rotateZ = useTransform(progress, [enter, peak, exit], [-8, 0, 6])
-  const scale = useTransform(
-    progress,
-    [enter, enterHold, exitHold, exit],
-    [0.82, 1, 1, 0.78]
-  )
-  const opacity = useTransform(
-    progress,
-    [enter, enter + segment * 0.18, exit - segment * 0.18, exit],
-    [0, 1, 1, 0]
-  )
-  const filter = useTransform(
-    progress,
-    [enter, enterHold, peak, exitHold, exit],
-    ['blur(14px)', 'blur(2px)', 'blur(0px)', 'blur(2px)', 'blur(14px)']
-  )
+  const angle = useTransform(progress, (p) => {
+    let a = (index / total - p) * Math.PI * 2
+    while (a > Math.PI) a -= Math.PI * 2
+    while (a < -Math.PI) a += Math.PI * 2
+    return a
+  })
+
+  const x = useTransform(angle, (a) => Math.sin(a) * ORBIT_RADIUS)
+  const z = useTransform(angle, (a) => (Math.cos(a) - 1) * DEPTH_RADIUS)
+  const y = useTransform(angle, (a) => -Math.sin(a) * 90)
+  const rotateY = useTransform(angle, (a) => -a * (180 / Math.PI))
+  const rotateX = useTransform(angle, (a) => Math.sin(a) * 6)
+  const rotateZ = useTransform(angle, (a) => Math.sin(a) * -4)
+  const scale = useTransform(angle, (a) => 0.62 + Math.max(0, Math.cos(a)) * 0.42)
+  const opacity = useTransform(angle, (a) => {
+    const c = Math.cos(a)
+    return c >= 0 ? 1 : Math.max(0.05, 0.4 + c * 0.6)
+  })
+  const filter = useTransform(angle, (a) => {
+    const blur = Math.max(0, (1 - Math.cos(a)) * 6)
+    return `blur(${blur.toFixed(2)}px)`
+  })
+  const zIndex = useTransform(angle, (a) => Math.round(Math.cos(a) * 100))
 
   return (
     <motion.div
@@ -182,7 +181,9 @@ function ExperienceDeckCard({
         scale,
         opacity,
         filter,
+        zIndex,
         transformStyle: 'preserve-3d',
+        transformPerspective: 1800,
       }}
       className="absolute h-[30rem] w-[22rem] md:h-[34rem] md:w-[32rem] lg:h-[36rem] lg:w-[38rem]"
     >
