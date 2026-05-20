@@ -15,6 +15,8 @@ export interface InteractiveTravelCardProps {
   className?: string;
   tags?: string[];
   badge?: string;
+  revealed?: boolean;
+  revealDelay?: number;
 }
 
 export const InteractiveTravelCard = React.forwardRef<
@@ -22,7 +24,19 @@ export const InteractiveTravelCard = React.forwardRef<
   InteractiveTravelCardProps
 >(
   (
-    { title, subtitle, imageUrl, actionText, href, onActionClick, className, tags, badge },
+    {
+      title,
+      subtitle,
+      imageUrl,
+      actionText,
+      href,
+      onActionClick,
+      className,
+      tags,
+      badge,
+      revealed,
+      revealDelay = 0,
+    },
     ref
   ) => {
     const mouseX = useMotionValue(0);
@@ -86,8 +100,14 @@ export const InteractiveTravelCard = React.forwardRef<
                   </motion.span>
                 )}
                 <motion.h2
-                  style={{ transform: "translateZ(50px)" }}
-                  className="text-2xl font-bold leading-tight"
+                  style={{
+                    transform: "translateZ(50px)",
+                    ...(revealed ? { animationDelay: `${revealDelay}s` } : {}),
+                  }}
+                  className={cn(
+                    "text-2xl font-bold leading-tight",
+                    revealed && "glitch-in"
+                  )}
                 >
                   {title}
                 </motion.h2>
