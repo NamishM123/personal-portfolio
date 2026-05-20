@@ -131,9 +131,18 @@ function ProjectEntry({
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 50 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, delay: index * 0.08 }}
+      initial={{ opacity: 0, y: 80, scale: 0.86, filter: 'blur(14px)' }}
+      animate={
+        inView
+          ? { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }
+          : {}
+      }
+      transition={{
+        duration: 1,
+        delay: index * 0.12,
+        ease: [0.21, 0.47, 0.32, 0.98],
+      }}
+      className={inView ? 'card-glow-in rounded-2xl' : 'rounded-2xl'}
     >
       <InteractiveTravelCard
         title={project.title}
@@ -143,6 +152,8 @@ function ProjectEntry({
         href={project.href}
         tags={project.tags}
         badge={project.badge}
+        revealed={inView}
+        revealDelay={index * 0.12 + 0.25}
         onActionClick={
           project.href !== '#'
             ? () => window.open(project.href, '_blank')
