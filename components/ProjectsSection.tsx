@@ -3,6 +3,7 @@
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { ArrowUpRight } from 'lucide-react'
+import { ScrollTiltCard } from '@/components/ui/scroll-tilt-card'
 
 interface Project {
   title: string
@@ -88,9 +89,11 @@ export function ProjectsSection() {
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="mx-auto grid w-full max-w-4xl grid-cols-1 gap-14 py-[15vh] sm:grid-cols-2">
         {projects.map((project, i) => (
-          <ProjectCard key={project.title} project={project} index={i} />
+          <ScrollTiltCard key={project.title} side={i % 2 === 0 ? 'L' : 'R'}>
+            <ProjectCard project={project} index={i} />
+          </ScrollTiltCard>
         ))}
       </div>
     </section>
