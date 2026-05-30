@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion'
 import { ShaderAnimation } from '@/components/ui/shader-animation'
-import { ParticleText } from '@/components/ui/particle-text'
 import { Spotlight } from '@/components/ui/spotlight'
 import { GitFork, Link, Mail, ArrowDown } from 'lucide-react'
 
@@ -27,19 +26,17 @@ export function HeroSection() {
           CS Student @ Cal Poly SLO
         </motion.p>
 
-        {/* Interactive particle name — sized to this box, splash shows behind it */}
-        <div className="h-[120px] w-full max-w-3xl md:h-[150px]">
-          <ParticleText
-            text="NAMISH MANNEPALLI"
-            transparent
-            disableExplosion
-            mouseForce={80}
-            animationSpeed={1.4}
-            pointScale={2.2}
-            bloomStrength={0.12}
-            aberration={0.004}
-          />
-        </div>
+        {/* Name — crisp grey glass treatment over the splash */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.35 }}
+          className="rounded-3xl border border-white/10 bg-white/[0.04] px-8 py-5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_20px_60px_-20px_rgba(0,0,0,0.7)]"
+        >
+          <h1 className="bg-gradient-to-b from-white via-neutral-300 to-neutral-500 bg-clip-text text-4xl font-bold tracking-tight text-transparent drop-shadow-[0_1px_1px_rgba(255,255,255,0.25)] sm:text-5xl md:text-7xl">
+            Namish Mannepalli
+          </h1>
+        </motion.div>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
