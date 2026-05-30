@@ -6,12 +6,15 @@ import * as THREE from "three"
 interface ShaderAnimationProps {
   /** Overall brightness multiplier for the shader (1 = full, lower = dimmer). */
   brightness?: number
+  /** Time increment per frame (lower = slower animation). Default 0.05. */
+  speed?: number
   /** Optional className override for the container. */
   className?: string
 }
 
 export function ShaderAnimation({
   brightness = 1.0,
+  speed = 0.05,
   className = "w-full h-screen",
 }: ShaderAnimationProps) {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -104,7 +107,7 @@ export function ShaderAnimation({
     // Animation loop
     const animate = () => {
       const animationId = requestAnimationFrame(animate)
-      uniforms.time.value += 0.05
+      uniforms.time.value += speed
       renderer.render(scene, camera)
 
       if (sceneRef.current) {
@@ -140,7 +143,7 @@ export function ShaderAnimation({
         material.dispose()
       }
     }
-  }, [brightness])
+  }, [brightness, speed])
 
   return (
     <div
