@@ -26,6 +26,8 @@ export interface GlassCardProps extends React.HTMLAttributes<HTMLDivElement> {
   links?: GlassCardLink[];
   viewMoreHref?: string;
   viewMoreLabel?: string;
+  tags?: string[];
+  badge?: string;
 }
 
 const defaultLinks: GlassCardLink[] = [
@@ -43,6 +45,8 @@ const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
       links = defaultLinks,
       viewMoreHref = "#",
       viewMoreLabel = "View more",
+      tags,
+      badge,
       ...props
     },
     ref
@@ -55,14 +59,31 @@ const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
       >
         <div className="relative h-full rounded-[50px] bg-gradient-to-br from-zinc-900 to-black shadow-2xl transition-all duration-500 ease-in-out [transform-style:preserve-3d] group-hover:[box-shadow:rgba(0,0,0,0.3)_30px_50px_25px_-40px,rgba(0,0,0,0.1)_0px_25px_30px_0px] group-hover:[transform:rotate3d(1,1,0,30deg)]">
           <div className="absolute inset-2 rounded-[55px] border-b border-l border-white/20 bg-gradient-to-b from-white/30 to-white/10 backdrop-blur-sm [transform-style:preserve-3d] [transform:translate3d(0,0,25px)]"></div>
-          <div className="absolute [transform:translate3d(0,0,26px)]">
-            <div className="px-7 pt-[100px] pb-0">
+          <div className="absolute right-0 left-0 [transform:translate3d(0,0,26px)]">
+            <div className="px-7 pt-[64px] pb-0">
+              {badge && (
+                <span className="mb-2 inline-block rounded-full border border-yellow-400/40 bg-yellow-500/15 px-2 py-0.5 text-[10px] font-medium uppercase tracking-widest text-yellow-300">
+                  ★ {badge}
+                </span>
+              )}
               <span className="block text-xl font-black text-white">
                 {title}
               </span>
-              <span className="mt-5 block text-[15px] text-zinc-300">
+              <span className="mt-3 block text-[13px] leading-snug text-zinc-300">
                 {description}
               </span>
+              {tags && tags.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-md border border-white/10 bg-white/10 px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wider text-zinc-200"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
           <div className="absolute bottom-5 left-5 right-5 flex items-center justify-between [transform-style:preserve-3d] [transform:translate3d(0,0,26px)]">
