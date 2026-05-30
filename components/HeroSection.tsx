@@ -1,11 +1,45 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { useRef } from 'react'
+import {
+  motion,
+  useMotionValue,
+  useSpring,
+  useTransform,
+  useMotionTemplate,
+} from 'framer-motion'
 import { ShaderAnimation } from '@/components/ui/shader-animation'
 import { Spotlight } from '@/components/ui/spotlight'
 import { GitFork, Link, Mail, ArrowDown } from 'lucide-react'
 
 export function HeroSection() {
+  // Interactive glass-tilt for the name
+  const nameRef = useRef<HTMLDivElement>(null)
+  const px = useMotionValue(0.5)
+  const py = useMotionValue(0.5)
+  const rotateX = useSpring(useTransform(py, [0, 1], [10, -10]), {
+    stiffness: 150,
+    damping: 15,
+  })
+  const rotateY = useSpring(useTransform(px, [0, 1], [-12, 12]), {
+    stiffness: 150,
+    damping: 15,
+  })
+  const glareX = useTransform(px, (v) => `${v * 100}%`)
+  const glareY = useTransform(py, (v) => `${v * 100}%`)
+  const glare = useMotionTemplate`radial-gradient(circle at ${glareX} ${glareY}, rgba(255,255,255,0.28), transparent 55%)`
+
+  const handleNameMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = nameRef.current?.getBoundingClientRect()
+    if (!rect) return
+    px.set((e.clientX - rect.left) / rect.width)
+    py.set((e.clientY - rect.top) / rect.height)
+  }
+  const handleNameLeave = () => {
+    px.set(0.5)
+    py.set(0.5)
+  }
+
   return (
     <section className="relative h-screen w-full bg-black overflow-hidden">
       <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="white" />
@@ -26,14 +60,24 @@ export function HeroSection() {
           CS Student @ Cal Poly SLO
         </motion.p>
 
-        {/* Name — crisp grey glass treatment over the splash */}
+        {/* Name — crisp grey glass treatment, tilts and catches light on hover */}
         <motion.div
+          ref={nameRef}
+          onMouseMove={handleNameMove}
+          onMouseLeave={handleNameLeave}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.35 }}
-          className="rounded-3xl border border-white/10 bg-white/[0.04] px-8 py-5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_20px_60px_-20px_rgba(0,0,0,0.7)]"
+          style={{ rotateX, rotateY, transformPerspective: 900 }}
+          className="group relative rounded-3xl border border-white/10 bg-white/[0.04] px-8 py-5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_20px_60px_-20px_rgba(0,0,0,0.7)] [transform-style:preserve-3d]"
         >
-          <h1 className="bg-gradient-to-b from-white via-neutral-300 to-neutral-500 bg-clip-text text-4xl font-bold tracking-tight text-transparent drop-shadow-[0_1px_1px_rgba(255,255,255,0.25)] sm:text-5xl md:text-7xl">
+          {/* Moving specular sheen that follows the cursor */}
+          <motion.div
+            aria-hidden
+            style={{ background: glare }}
+            className="pointer-events-none absolute inset-0 rounded-3xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          />
+          <h1 className="relative bg-gradient-to-b from-white via-neutral-300 to-neutral-500 bg-clip-text text-4xl font-bold tracking-tight text-transparent drop-shadow-[0_1px_1px_rgba(255,255,255,0.25)] sm:text-5xl md:text-7xl">
             Namish Mannepalli
           </h1>
         </motion.div>
