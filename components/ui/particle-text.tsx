@@ -30,6 +30,12 @@ interface ParticleTextProps {
   transparent?: boolean;
   /** Disable the click explosion burst. */
   disableExplosion?: boolean;
+  /** Multiplier applied to each particle's point size (default 7). Lower = smaller dots / less glow. */
+  pointScale?: number;
+  /** Post-processing bloom amount (default 0.6). Lower = less glow. */
+  bloomStrength?: number;
+  /** Chromatic aberration amount (default 0.015). Lower = less color fringing. */
+  aberration?: number;
   primaryColor?: [number, number, number]; // RGB
   secondaryColor?: [number, number, number];
   accentColor?: [number, number, number];
@@ -143,6 +149,8 @@ const postFragmentShader = `
   uniform float u_time;
   uniform vec2 u_resolution;
   uniform float u_alphaFromLuma;
+  uniform float u_bloom;
+  uniform float u_aberration;
 
   varying vec2 v_texCoord;
 
@@ -187,7 +195,7 @@ const postFragmentShader = `
 
     // Chromatic aberration for retro effect
     vec2 center = v_texCoord - 0.5;
-    float aberration = length(center) * 0.015;
+    float aberration = length(center) * u_aberration;
 
     vec4 r = texture2D(u_texture, v_texCoord + center * aberration * vec2(1.0, 0.0));
     vec4 g = texture2D(u_texture, v_texCoord);
@@ -200,7 +208,7 @@ const postFragmentShader = `
     vignette = smoothstep(0.3, 1.0, vignette);
 
     // Final composition
-    vec4 final = aberrated + bloom * 0.6;
+    vec4 final = aberrated + bloom * u_bloom;
     final.rgb += grain;
     final.rgb *= vignette;
 
@@ -236,12 +244,16 @@ export const ParticleText: React.FC<ParticleTextProps> = ({
   className = '',
   transparent = false,
   disableExplosion = false,
+  pointScale = 7,
+  bloomStrength = 0.6,
+  aberration = 0.015,
   primaryColor = [0.4, 0.49, 0.92], // #667EEA
   secondaryColor = [0.46, 0.29, 0.64], // #764BA2
   accentColor = [0.8, 0.3, 0.9], // Purple accent
   glowColor = [0.0, 0.96, 1.0], // #00F5FF
   coreColor = [1.0, 1.0, 1.0], // White core
 }) => {
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const webglCanvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number>(undefined);
@@ -382,8 +394,9 @@ export const ParticleText: React.FC<ParticleTextProps> = ({
 
     particlesRef.current = [];
 
-    // Responsive font size
-    const calculatedFontSize = fontSize || Math.min(140, window.innerWidth / 7);
+    // Responsive font size based on the canvas (container) width, not the window,
+    // so the text stays sized to its own box.
+    const calculatedFontSize = fontSize || Math.max(24, Math.min(72, canvas.width / 16));
     ctx.font = `bold ${calculatedFontSize}px ${fontFamily}`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -537,7 +550,7 @@ export const ParticleText: React.FC<ParticleTextProps> = ({
     for (let i = 0; i < particles.length; i++) {
       positions[i * 2] = particles[i].x;
       positions[i * 2 + 1] = particles[i].y;
-      sizes[i] = particles[i].size * 7; // Enhanced size for better visibility
+      sizes[i] = particles[i].size * pointScale; // particle point size
       opacities[i] = particles[i].opacity;
     }
 
@@ -601,12 +614,16 @@ export const ParticleText: React.FC<ParticleTextProps> = ({
     const postTimeLocation = gl.getUniformLocation(postProgram, 'u_time');
     const postResolutionLocation = gl.getUniformLocation(postProgram, 'u_resolution');
     const alphaFromLumaLocation = gl.getUniformLocation(postProgram, 'u_alphaFromLuma');
+    const bloomLocation = gl.getUniformLocation(postProgram, 'u_bloom');
+    const aberrationLocation = gl.getUniformLocation(postProgram, 'u_aberration');
 
     gl.uniform1i(textureLocation, 0);
     gl.uniform2f(texelSizeLocation, 1.0 / canvas.width, 1.0 / canvas.height);
     gl.uniform1f(postTimeLocation, currentTime);
     gl.uniform2f(postResolutionLocation, canvas.width, canvas.height);
     gl.uniform1f(alphaFromLumaLocation, transparent ? 1.0 : 0.0);
+    gl.uniform1f(bloomLocation, bloomStrength);
+    gl.uniform1f(aberrationLocation, aberration);
 
     if (transparent) {
       // Composite the post-processed result over whatever is behind the canvas.
@@ -624,7 +641,7 @@ export const ParticleText: React.FC<ParticleTextProps> = ({
 
     // Clean up
     gl.deleteBuffer(quadBuffer);
-  }, [primaryColor, secondaryColor, accentColor, glowColor, coreColor, transparent]);
+  }, [primaryColor, secondaryColor, accentColor, glowColor, coreColor, transparent, pointScale, bloomStrength, aberration]);
 
   const lastTimeRef = useRef<number>(0);
   const animateRef = useRef<(currentTime: number) => void>(() => {});
@@ -656,12 +673,17 @@ export const ParticleText: React.FC<ParticleTextProps> = ({
   const handleCanvasResize = useCallback(() => {
     const canvas = canvasRef.current;
     const webglCanvas = webglCanvasRef.current;
+    const wrapper = wrapperRef.current;
     if (!canvas || !webglCanvas) return;
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    webglCanvas.width = window.innerWidth;
-    webglCanvas.height = window.innerHeight;
+    // Size to the container box (falls back to the window if unmeasured).
+    const width = wrapper?.clientWidth || window.innerWidth;
+    const height = wrapper?.clientHeight || window.innerHeight;
+
+    canvas.width = width;
+    canvas.height = height;
+    webglCanvas.width = width;
+    webglCanvas.height = height;
 
     // Update WebGL viewport and framebuffer
     const gl = glRef.current;
@@ -677,8 +699,9 @@ export const ParticleText: React.FC<ParticleTextProps> = ({
   }, [createParticlesFromText]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    mouseRef.current.x = e.clientX;
-    mouseRef.current.y = e.clientY;
+    const rect = webglCanvasRef.current?.getBoundingClientRect();
+    mouseRef.current.x = e.clientX - (rect?.left ?? 0);
+    mouseRef.current.y = e.clientY - (rect?.top ?? 0);
   }, []);
 
   const handleClick = useCallback(() => {
@@ -730,8 +753,16 @@ export const ParticleText: React.FC<ParticleTextProps> = ({
       handleCanvasResize();
       window.addEventListener('resize', handleCanvasResize);
 
+      // Track the container's own size so the text scales to its box.
+      let observer: ResizeObserver | undefined;
+      if (wrapperRef.current && typeof ResizeObserver !== 'undefined') {
+        observer = new ResizeObserver(() => handleCanvasResize());
+        observer.observe(wrapperRef.current);
+      }
+
       return () => {
         window.removeEventListener('resize', handleCanvasResize);
+        observer?.disconnect();
       };
     }
   }, [initWebGL, handleCanvasResize]);
@@ -751,7 +782,7 @@ export const ParticleText: React.FC<ParticleTextProps> = ({
   }, [animate]);
 
   return (
-    <div className={`relative w-full h-screen overflow-hidden ${className}`}>
+    <div ref={wrapperRef} className={`relative w-full h-full overflow-hidden ${className}`}>
       {/* Hidden canvas for text rendering */}
       <canvas
         ref={canvasRef}
