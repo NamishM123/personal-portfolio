@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ExternalLink, Github } from 'lucide-react'
+import { ExternalLink, GitFork } from 'lucide-react'
 import GlassCard from '@/components/ui/glass-card'
 
 const projects = [
@@ -54,7 +54,7 @@ export function ProjectsSection() {
               title={project.title}
               description={project.description}
               links={[
-                { icon: Github, href: project.github, label: `${project.title} on GitHub` },
+                { icon: GitFork, href: project.github, label: `${project.title} on GitHub` },
                 { icon: ExternalLink, href: project.link, label: `${project.title} live` },
               ]}
               viewMoreHref={project.link}

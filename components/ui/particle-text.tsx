@@ -627,6 +627,7 @@ export const ParticleText: React.FC<ParticleTextProps> = ({
   }, [primaryColor, secondaryColor, accentColor, glowColor, coreColor, transparent]);
 
   const lastTimeRef = useRef<number>(0);
+  const animateRef = useRef<(currentTime: number) => void>(() => {});
 
   const animate = useCallback((currentTime: number) => {
     // Calculate FPS
@@ -644,8 +645,13 @@ export const ParticleText: React.FC<ParticleTextProps> = ({
     // Render with WebGL
     renderWebGL(currentTime);
 
-    animationRef.current = requestAnimationFrame(animate);
+    // Loop via a ref so the callback doesn't reference itself in its initializer.
+    animationRef.current = requestAnimationFrame(animateRef.current);
   }, [updateParticle, renderWebGL]);
+
+  useEffect(() => {
+    animateRef.current = animate;
+  }, [animate]);
 
   const handleCanvasResize = useCallback(() => {
     const canvas = canvasRef.current;
@@ -675,7 +681,7 @@ export const ParticleText: React.FC<ParticleTextProps> = ({
     mouseRef.current.y = e.clientY;
   }, []);
 
-  const handleClick = useCallback((e: React.MouseEvent) => {
+  const handleClick = useCallback(() => {
     if (disableExplosion) return;
 
     const mouse = mouseRef.current;

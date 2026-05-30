@@ -1,6 +1,6 @@
 // component.tsx
 import * as React from "react";
-import { Instagram, Twitter, Github, ChevronDown, type LucideIcon } from "lucide-react";
+import { Link as LinkIcon, ExternalLink, GitFork, ChevronDown, type LucideIcon } from "lucide-react";
 
 const ULogo = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -29,9 +29,9 @@ export interface GlassCardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const defaultLinks: GlassCardLink[] = [
-  { icon: Instagram, href: "#", label: "Instagram" },
-  { icon: Twitter, href: "#", label: "Twitter" },
-  { icon: Github, href: "#", label: "Github" },
+  { icon: GitFork, href: "#", label: "GitHub" },
+  { icon: LinkIcon, href: "#", label: "Website" },
+  { icon: ExternalLink, href: "#", label: "External" },
 ];
 
 const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
