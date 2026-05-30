@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { SplineScene } from '@/components/ui/splite'
+import { ShaderAnimation } from '@/components/ui/shader-animation'
 import { Spotlight } from '@/components/ui/spotlight'
 import { GitFork, Link, Mail, ArrowDown } from 'lucide-react'
 
@@ -67,12 +67,11 @@ export function HeroSection() {
           </motion.div>
         </div>
 
-        {/* Right: Spline 3D */}
+        {/* Right: shader animation */}
         <div className="hidden md:flex flex-1 relative">
-          <SplineScene
-            scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-            className="w-full h-full"
-          />
+          <ShaderAnimation brightness={0.35} className="w-full h-full" />
+          {/* Fade the shader into the page background on the left edge */}
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black via-transparent to-transparent" />
         </div>
       </div>
 
