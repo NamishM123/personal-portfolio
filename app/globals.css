@@ -40,10 +40,11 @@ body {
   overflow-x: hidden;
 }
 
-/* Subtle paper grain — barely-visible noise to feel like real stock */
-.paper-grain {
-  position: relative;
-}
+/* Subtle paper grain — barely-visible noise to feel like real stock.
+   Pseudo-element positions against the nearest positioned ancestor, so the
+   host element should already have its own position (relative/absolute).
+   We intentionally don't force `position: relative` here — doing so would
+   override Tailwind's `absolute` utility on hosts that need to be absolute. */
 .paper-grain::before {
   content: "";
   position: absolute;
