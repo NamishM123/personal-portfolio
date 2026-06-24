@@ -35,7 +35,7 @@ export function SkillsSection() {
   const inView = useInView(ref, { once: true })
 
   return (
-    <section className="py-24 px-8 md:px-16 max-w-7xl mx-auto" id="skills">
+    <section className="relative py-28 px-8 md:px-16 max-w-7xl mx-auto" id="skills">
       <motion.div
         ref={ref}
         initial={{ opacity: 0, y: 20 }}
@@ -43,10 +43,10 @@ export function SkillsSection() {
         transition={{ duration: 0.7 }}
         className="mb-16"
       >
-        <p className="text-indigo-400 font-mono text-sm tracking-widest uppercase mb-3">
-          What I work with
-        </p>
-        <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Skills</h2>
+        <p className="eyebrow mb-4">Chapter three — the toolkit</p>
+        <h2 className="literary text-5xl md:text-6xl italic font-light text-ink">
+          A small box of <span className="crimson">implements</span>.
+        </h2>
       </motion.div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -58,7 +58,13 @@ export function SkillsSection() {
   )
 }
 
-function SkillGroup({ group, index }: { group: typeof skillGroups[0]; index: number }) {
+function SkillGroup({
+  group,
+  index,
+}: {
+  group: (typeof skillGroups)[0]
+  index: number
+}) {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-60px' })
 
@@ -68,16 +74,14 @@ function SkillGroup({ group, index }: { group: typeof skillGroups[0]; index: num
       initial={{ opacity: 0, y: 30 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.5, delay: index * 0.08 }}
-      className="rounded-2xl border border-neutral-800 bg-neutral-950 p-6"
+      className="rounded-2xl border border-rule bg-paper-2/55 p-7 shadow-[0_20px_50px_-30px_rgba(58,40,18,0.3)]"
     >
-      <h3 className="text-xs font-mono text-indigo-400 tracking-widest uppercase mb-4">
-        {group.label}
-      </h3>
+      <h3 className="eyebrow mb-5 text-ink-soft">{group.label}</h3>
       <div className="flex flex-wrap gap-2">
         {group.skills.map((skill) => (
           <span
             key={skill}
-            className="px-3 py-1 rounded-full text-sm bg-neutral-900 text-neutral-300 border border-neutral-700 hover:border-indigo-500/50 hover:text-white transition-all"
+            className="literary italic px-3 py-1 rounded-full text-sm text-ink-soft bg-paper border border-rule hover:border-crimson hover:text-ink transition-all"
           >
             {skill}
           </span>

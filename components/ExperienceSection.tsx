@@ -10,14 +10,12 @@ const experiences = [
     company: 'Code Box',
     period: 'Dec 2025 – Present',
     icon: <Code2 size={18} />,
-    color: 'text-green-400',
-    border: 'border-green-500/30',
-    bg: 'bg-green-500/5',
+    accent: '#4a5a3a', // moss
     bullets: [
-      'Led a 10-person team building Poly Problems, a mobile-first campus reporting app with SSO auth and AI-powered classification.',
-      'Delegated tasks and coordinated sprints across frontend, backend, and AI to ensure steady on-time progress.',
-      'Architected React Native frontend with Supabase Auth, Database, and RESTful APIs for secure geotagged submissions.',
-      'Optimized async data fetching, reducing API response time and improving overall application responsiveness.',
+      'Led a ten-person team building Poly Problems — a mobile-first campus reporting app with SSO and AI-driven classification.',
+      'Coordinated sprints across frontend, backend, and AI so the work moved as one quiet river.',
+      'Architected the React Native frontend with Supabase Auth, Database, and RESTful APIs for secure geotagged submissions.',
+      'Optimized async data fetching, shortening API response times and softening the app in the hand.',
     ],
   },
   {
@@ -25,14 +23,12 @@ const experiences = [
     company: 'Cal Poly State University, SLO',
     period: 'Dec 2025 – Present',
     icon: <Shield size={18} />,
-    color: 'text-blue-400',
-    border: 'border-blue-500/30',
-    bg: 'bg-blue-500/5',
+    accent: '#9a1f2b', // crimson
     bullets: [
-      'Built AI-powered Python pipelines analyzing open-source ecosystems using GitHub, NPM, and CVE data.',
-      'Leveraged graph theory and ML-based anomaly detection to uncover dependency and contributor risks.',
-      'Hosted a public GitHub repository implementing automated red-flag detection for vulnerable dependencies and suspicious releases.',
-      'Validated blue-flag heuristics assessing positive trust signals — active maintenance, signed commits, rapid patching.',
+      'Built AI-powered Python pipelines reading open-source ecosystems by way of GitHub, NPM, and CVE data.',
+      'Used graph theory and ML anomaly detection to surface dependency and contributor risks.',
+      'Published a public repository implementing automated red-flag detection for vulnerable dependencies and suspicious releases.',
+      'Validated blue-flag heuristics — active maintenance, signed commits, rapid patching — as positive trust signals.',
     ],
   },
   {
@@ -40,11 +36,9 @@ const experiences = [
     company: 'Benu Restaurant Platform',
     period: 'Dec 2025 – Present',
     icon: <Bot size={18} />,
-    color: 'text-orange-400',
-    border: 'border-orange-500/30',
-    bg: 'bg-orange-500/5',
+    accent: '#b88a3f', // ochre
     bullets: [
-      'Built a mobile-first restaurant ordering platform using Next.js 15, React 19, and TypeScript with QR-code ordering.',
+      'Built a mobile-first restaurant ordering platform with Next.js 15, React 19, and TypeScript — QR-code ordering at the table.',
       'Engineered an OpenAI GPT-4o-mini chatbot with allergen-first safety architecture and medical emergency override detection.',
       'Designed a multilingual conversational commerce system with automatic language detection and anti-prompt-injection guardrails.',
     ],
@@ -56,7 +50,7 @@ export function ExperienceSection() {
   const inView = useInView(titleRef, { once: true })
 
   return (
-    <section className="py-24 px-8 md:px-16 max-w-7xl mx-auto" id="experience">
+    <section className="relative py-28 px-8 md:px-16 max-w-7xl mx-auto" id="experience">
       <motion.div
         ref={titleRef}
         initial={{ opacity: 0, y: 20 }}
@@ -64,52 +58,58 @@ export function ExperienceSection() {
         transition={{ duration: 0.6 }}
         className="mb-16"
       >
-        <p className="text-indigo-400 font-mono text-sm tracking-widest uppercase mb-3">
-          Where I've worked
-        </p>
-        <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Experience</h2>
+        <p className="eyebrow mb-4">Chapter two — letters from work</p>
+        <h2 className="literary text-5xl md:text-6xl italic font-light text-ink">
+          Places I have <span className="crimson">written from</span>.
+        </h2>
       </motion.div>
 
       <div className="relative">
         {/* Timeline line */}
-        <div className="absolute left-6 top-0 bottom-0 w-px bg-neutral-800 hidden md:block" />
+        <div className="absolute left-6 top-0 bottom-0 w-px bg-rule hidden md:block" />
 
         <div className="space-y-8">
           {experiences.map((exp, i) => (
-            <div
+            <motion.div
               key={i}
-              className={`relative md:ml-16 overflow-hidden rounded-2xl border ${exp.border} bg-white/[0.04] p-6 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_20px_60px_-20px_rgba(0,0,0,0.6)]`}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ duration: 0.5, delay: i * 0.08 }}
+              className="relative md:ml-16 overflow-hidden rounded-2xl border border-rule bg-paper-2/60 p-7 backdrop-blur-sm shadow-[0_20px_50px_-30px_rgba(58,40,18,0.35)]"
             >
-              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_30%_0%,rgba(255,255,255,0.08),transparent_55%)]" />
-              <div className={`pointer-events-none absolute inset-0 ${exp.bg}`} />
-
+              {/* Timeline dot */}
               <div
-                className={`absolute -left-[2.85rem] top-6 w-3 h-3 rounded-full border-2 border-neutral-800 bg-neutral-950 hidden md:block ring-2 ring-offset-2 ring-offset-black ${exp.color.replace(
-                  'text-',
-                  'ring-'
-                )}`}
+                className="absolute -left-[2.85rem] top-7 hidden md:block h-3 w-3 rounded-full border-2 border-paper"
+                style={{ backgroundColor: exp.accent }}
               />
 
-              <div className="relative">
-                <div className="flex items-start gap-3 mb-4">
-                  <span className={exp.color}>{exp.icon}</span>
-                  <div>
-                    <h3 className="font-bold text-white text-lg">{exp.role}</h3>
-                    <p className="text-neutral-400 text-sm">{exp.company}</p>
-                    <p className="text-neutral-600 text-xs font-mono mt-0.5">{exp.period}</p>
-                  </div>
+              <div className="flex items-start gap-3 mb-5">
+                <span style={{ color: exp.accent }}>{exp.icon}</span>
+                <div>
+                  <h3 className="literary italic text-xl text-ink leading-tight">
+                    {exp.role}
+                    <span className="text-ink-muted not-italic"> — </span>
+                    <span className="literary italic" style={{ color: exp.accent }}>
+                      {exp.company}
+                    </span>
+                  </h3>
+                  <p className="eyebrow mt-1.5">{exp.period}</p>
                 </div>
-
-                <ul className="space-y-2">
-                  {exp.bullets.map((b, j) => (
-                    <li key={j} className="flex gap-2 text-sm text-neutral-300">
-                      <span className="text-neutral-600 mt-1 shrink-0">·</span>
-                      <span>{b}</span>
-                    </li>
-                  ))}
-                </ul>
               </div>
-            </div>
+
+              <ul className="space-y-3">
+                {exp.bullets.map((b, j) => (
+                  <li
+                    key={j}
+                    className="literary flex gap-3 text-[15px] leading-relaxed text-ink-soft"
+                  >
+                    <span className="crimson shrink-0 mt-2">·</span>
+                    <span>{b}</span>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
           ))}
         </div>
       </div>
