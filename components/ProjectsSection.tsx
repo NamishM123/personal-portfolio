@@ -1,8 +1,10 @@
 'use client'
 
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { ExternalLink } from 'lucide-react'
 import GlassCard from '@/components/ui/glass-card'
+import { LeafGlyph } from '@/components/ui/ornaments'
 
 interface Project {
   title: string
@@ -68,25 +70,68 @@ const projects: Project[] = [
 
 export function ProjectsSection() {
   return (
-    <section id="projects" className="relative py-28 px-8 md:px-16 max-w-7xl mx-auto">
+    <section
+      id="projects"
+      className="relative py-28 px-8 md:px-16 max-w-7xl mx-auto overflow-hidden"
+    >
+      {/* Watermark photograph — pine canopy from below, paper-tinted */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-10 right-0 hidden md:block w-[44%] h-[60%] opacity-[0.18]"
+        style={{
+          maskImage: 'radial-gradient(ellipse at right, black 30%, transparent 75%)',
+          WebkitMaskImage: 'radial-gradient(ellipse at right, black 30%, transparent 75%)',
+        }}
+      >
+        <Image
+          src="https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1600&q=80"
+          alt=""
+          fill
+          sizes="50vw"
+          className="object-cover"
+          style={{ filter: 'sepia(0.45) saturate(0.7)' }}
+        />
+      </div>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className="mb-16"
+        className="relative mb-16 grid grid-cols-1 md:grid-cols-[1fr_220px] gap-10 items-end"
       >
-        <p className="eyebrow mb-4">Chapter one — works</p>
-        <h2 className="literary text-5xl md:text-6xl italic font-light text-ink">
-          A small <span className="crimson">field guide</span> of things I&apos;ve made.
-        </h2>
-        <p className="literary mt-4 max-w-xl text-lg italic text-ink-soft">
-          Each entry is a real product with real readers — shipped, broken,
-          mended, and sometimes won.
-        </p>
+        <div>
+          <p className="eyebrow mb-4 flex items-center gap-2">
+            <LeafGlyph size={12} className="text-bark" />
+            Chapter one — works
+          </p>
+          <h2 className="literary text-5xl md:text-6xl italic font-light text-ink leading-[1.05]">
+            A small <span className="crimson">field guide</span> of things I&apos;ve made.
+          </h2>
+          <p className="literary mt-5 max-w-xl text-lg italic text-ink-soft">
+            Each entry is a real product with real readers — shipped, broken,
+            mended, and sometimes won.
+          </p>
+        </div>
+
+        {/* Field-guide plate */}
+        <figure className="relative hidden md:block">
+          <div className="plate aspect-[3/4] relative">
+            <Image
+              src="https://images.unsplash.com/photo-1465146633011-14f8e0781093?auto=format&fit=crop&w=600&q=80"
+              alt=""
+              fill
+              sizes="220px"
+              className="object-cover"
+            />
+          </div>
+          <figcaption className="literary italic text-xs text-ink-muted mt-2 text-center">
+            Plate i. — <span className="not-italic">a path through pines</span>
+          </figcaption>
+        </figure>
       </motion.div>
 
-      <div className="flex flex-wrap justify-center gap-12">
+      <div className="relative flex flex-wrap justify-center gap-12">
         {projects.map((project, i) => (
           <motion.div
             key={project.title}
