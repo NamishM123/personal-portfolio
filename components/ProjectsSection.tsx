@@ -76,12 +76,15 @@ export function ProjectsSection() {
         transition={{ duration: 0.6 }}
         className="mb-16"
       >
-        <p className="text-indigo-400 font-mono text-sm tracking-widest uppercase mb-3">
-          What I&apos;ve built
+        <p className="text-accent font-mono text-[11px] tracking-[0.3em] uppercase mb-3">
+          ☞ Chapter I — Works on paper
         </p>
-        <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Projects</h2>
-        <p className="text-neutral-400 max-w-xl">
-          Real products shipped to real users — from hackathon winners to production apps.
+        <h2 className="font-serif text-5xl md:text-6xl text-ink mb-4 tracking-tight">
+          Selected <span className="italic text-accent">projects</span>
+        </h2>
+        <p className="text-ink-soft max-w-xl font-serif text-lg italic">
+          Real products shipped to real users — hackathon victories, production apps,
+          and quiet little tools that mattered to someone.
         </p>
       </motion.div>
 

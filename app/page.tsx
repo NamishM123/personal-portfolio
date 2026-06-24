@@ -7,19 +7,19 @@ import { ContactSection } from '@/components/ContactSection'
 
 export default function Home() {
   return (
-    <main className="bg-black min-h-screen">
+    <main className="bg-background min-h-screen">
       <Navbar />
       <HeroSection />
-      <div className="border-t border-neutral-900">
+      <div className="border-t border-border-soft">
         <ProjectsSection />
       </div>
-      <div className="border-t border-neutral-900">
+      <div className="border-t border-border-soft">
         <ExperienceSection />
       </div>
-      <div className="border-t border-neutral-900">
+      <div className="border-t border-border-soft">
         <SkillsSection />
       </div>
-      <div className="border-t border-neutral-900">
+      <div className="border-t border-border-soft">
         <ContactSection />
       </div>
     </main>

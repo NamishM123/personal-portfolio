@@ -10,9 +10,9 @@ const experiences = [
     company: 'Code Box',
     period: 'Dec 2025 – Present',
     icon: <Code2 size={18} />,
-    color: 'text-green-400',
-    border: 'border-green-500/30',
-    bg: 'bg-green-500/5',
+    accent: 'text-emerald-800',
+    border: 'border-emerald-900/20',
+    wash: 'bg-emerald-900/[0.03]',
     bullets: [
       'Led a 10-person team building Poly Problems, a mobile-first campus reporting app with SSO auth and AI-powered classification.',
       'Delegated tasks and coordinated sprints across frontend, backend, and AI to ensure steady on-time progress.',
@@ -25,9 +25,9 @@ const experiences = [
     company: 'Cal Poly State University, SLO',
     period: 'Dec 2025 – Present',
     icon: <Shield size={18} />,
-    color: 'text-blue-400',
-    border: 'border-blue-500/30',
-    bg: 'bg-blue-500/5',
+    accent: 'text-sky-900',
+    border: 'border-sky-900/20',
+    wash: 'bg-sky-900/[0.03]',
     bullets: [
       'Built AI-powered Python pipelines analyzing open-source ecosystems using GitHub, NPM, and CVE data.',
       'Leveraged graph theory and ML-based anomaly detection to uncover dependency and contributor risks.',
@@ -40,9 +40,9 @@ const experiences = [
     company: 'Benu Restaurant Platform',
     period: 'Dec 2025 – Present',
     icon: <Bot size={18} />,
-    color: 'text-orange-400',
-    border: 'border-orange-500/30',
-    bg: 'bg-orange-500/5',
+    accent: 'text-amber-800',
+    border: 'border-amber-900/20',
+    wash: 'bg-amber-900/[0.03]',
     bullets: [
       'Built a mobile-first restaurant ordering platform using Next.js 15, React 19, and TypeScript with QR-code ordering.',
       'Engineered an OpenAI GPT-4o-mini chatbot with allergen-first safety architecture and medical emergency override detection.',
@@ -64,46 +64,52 @@ export function ExperienceSection() {
         transition={{ duration: 0.6 }}
         className="mb-16"
       >
-        <p className="text-indigo-400 font-mono text-sm tracking-widest uppercase mb-3">
-          Where I've worked
+        <p className="text-accent font-mono text-[11px] tracking-[0.3em] uppercase mb-3">
+          ☞ Chapter II — A working chronicle
         </p>
-        <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Experience</h2>
+        <h2 className="font-serif text-5xl md:text-6xl text-ink mb-4 tracking-tight">
+          <span className="italic text-accent">Experience</span>, in order
+        </h2>
       </motion.div>
 
       <div className="relative">
-        {/* Timeline line */}
-        <div className="absolute left-6 top-0 bottom-0 w-px bg-neutral-800 hidden md:block" />
+        {/* Margin rule, like a notebook */}
+        <div className="absolute left-6 top-0 bottom-0 w-px bg-border hidden md:block" />
 
         <div className="space-y-8">
           {experiences.map((exp, i) => (
             <div
               key={i}
-              className={`relative md:ml-16 overflow-hidden rounded-2xl border ${exp.border} bg-white/[0.04] p-6 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_20px_60px_-20px_rgba(0,0,0,0.6)]`}
+              className={`relative md:ml-16 overflow-hidden rounded-sm border ${exp.border} bg-paper p-7 shadow-[0_1px_0_rgba(0,0,0,0.04),0_18px_45px_-25px_rgba(20,15,10,0.25)] paper-grain`}
             >
-              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_30%_0%,rgba(255,255,255,0.08),transparent_55%)]" />
-              <div className={`pointer-events-none absolute inset-0 ${exp.bg}`} />
+              <div className={`pointer-events-none absolute inset-0 ${exp.wash}`} />
 
+              {/* Inkwell dot on the timeline */}
               <div
-                className={`absolute -left-[2.85rem] top-6 w-3 h-3 rounded-full border-2 border-neutral-800 bg-neutral-950 hidden md:block ring-2 ring-offset-2 ring-offset-black ${exp.color.replace(
+                className={`absolute -left-[2.9rem] top-7 hidden h-3 w-3 rounded-full bg-background ring-1 ring-border md:block ${exp.accent.replace(
                   'text-',
-                  'ring-'
+                  'after:bg-'
                 )}`}
-              />
+              >
+                <span className={`absolute inset-0.5 rounded-full ${exp.accent.replace('text-', 'bg-')}`} />
+              </div>
 
               <div className="relative">
                 <div className="flex items-start gap-3 mb-4">
-                  <span className={exp.color}>{exp.icon}</span>
+                  <span className={exp.accent}>{exp.icon}</span>
                   <div>
-                    <h3 className="font-bold text-white text-lg">{exp.role}</h3>
-                    <p className="text-neutral-400 text-sm">{exp.company}</p>
-                    <p className="text-neutral-600 text-xs font-mono mt-0.5">{exp.period}</p>
+                    <h3 className="font-serif text-2xl text-ink leading-tight">{exp.role}</h3>
+                    <p className="text-ink-soft text-sm">{exp.company}</p>
+                    <p className="text-muted-foreground text-[10px] font-mono tracking-[0.2em] uppercase mt-1">
+                      {exp.period}
+                    </p>
                   </div>
                 </div>
 
                 <ul className="space-y-2">
                   {exp.bullets.map((b, j) => (
-                    <li key={j} className="flex gap-2 text-sm text-neutral-300">
-                      <span className="text-neutral-600 mt-1 shrink-0">·</span>
+                    <li key={j} className="flex gap-3 text-[15px] leading-relaxed text-ink-soft font-serif">
+                      <span className="text-accent mt-0.5 shrink-0">§</span>
                       <span>{b}</span>
                     </li>
                   ))}

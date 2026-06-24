@@ -1,136 +1,103 @@
 'use client'
 
-import { useRef } from 'react'
-import {
-  motion,
-  useMotionValue,
-  useSpring,
-  useTransform,
-  useMotionTemplate,
-} from 'framer-motion'
-import { ShaderAnimation } from '@/components/ui/shader-animation'
-import { Spotlight } from '@/components/ui/spotlight'
-import { GitFork, Link, Mail, ArrowDown } from 'lucide-react'
+import { motion } from 'framer-motion'
+import InkReveal from '@/components/ui/ink-reveal'
+import { GitFork, Link, Mail, ArrowDown, PenLine } from 'lucide-react'
 
 export function HeroSection() {
-  // Interactive glass-tilt for the name
-  const nameRef = useRef<HTMLDivElement>(null)
-  const px = useMotionValue(0.5)
-  const py = useMotionValue(0.5)
-  const rotateX = useSpring(useTransform(py, [0, 1], [10, -10]), {
-    stiffness: 150,
-    damping: 15,
-  })
-  const rotateY = useSpring(useTransform(px, [0, 1], [-12, 12]), {
-    stiffness: 150,
-    damping: 15,
-  })
-  const glareX = useTransform(px, (v) => `${v * 100}%`)
-  const glareY = useTransform(py, (v) => `${v * 100}%`)
-  const glare = useMotionTemplate`radial-gradient(circle at ${glareX} ${glareY}, rgba(255,255,255,0.28), transparent 55%)`
-
-  const handleNameMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = nameRef.current?.getBoundingClientRect()
-    if (!rect) return
-    px.set((e.clientX - rect.left) / rect.width)
-    py.set((e.clientY - rect.top) / rect.height)
-  }
-  const handleNameLeave = () => {
-    px.set(0.5)
-    py.set(0.5)
-  }
-
   return (
-    <section className="relative h-screen w-full bg-black overflow-hidden">
-      <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="white" />
-
-      {/* Background: slow shader "splash" */}
-      <div className="absolute inset-0 z-0">
-        <ShaderAnimation brightness={0.28} speed={0.018} className="w-full h-full" />
+    <section className="relative h-screen w-full overflow-hidden bg-background">
+      {/* Background photograph — revealed only where the visitor's cursor drags ink across it. */}
+      <div className="absolute inset-0 z-0 paper-grain">
+        <img
+          src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=2000&q=80"
+          alt=""
+          aria-hidden
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <InkReveal maskColor={[252, 250, 248]} brushSize={140} lifetime={750} />
       </div>
 
-      {/* Foreground content, stacked and centered */}
-      <div className="relative z-10 flex h-full flex-col items-center justify-center gap-6 px-6 text-center">
-        <motion.p
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-indigo-400 text-sm font-mono tracking-widest uppercase"
-        >
-          CS Student @ Cal Poly SLO
-        </motion.p>
-
-        {/* Name — crisp grey glass treatment, tilts and catches light on hover */}
+      {/* Foreground — text sits above the ink layer (which is z-1). */}
+      <div className="relative z-10 flex h-full flex-col items-center justify-center gap-6 px-6 text-center pointer-events-none">
         <motion.div
-          ref={nameRef}
-          onMouseMove={handleNameMove}
-          onMouseLeave={handleNameLeave}
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.35 }}
-          style={{ rotateX, rotateY, transformPerspective: 900 }}
-          className="group relative rounded-3xl border border-white/10 bg-white/[0.04] px-8 py-5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_20px_60px_-20px_rgba(0,0,0,0.7)] [transform-style:preserve-3d]"
+          transition={{ duration: 1, delay: 0.2 }}
+          className="flex items-center gap-2 text-accent font-mono text-[11px] tracking-[0.3em] uppercase"
         >
-          {/* Moving specular sheen that follows the cursor */}
-          <motion.div
-            aria-hidden
-            style={{ background: glare }}
-            className="pointer-events-none absolute inset-0 rounded-3xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-          />
-          <h1 className="relative bg-gradient-to-b from-white via-neutral-300 to-neutral-500 bg-clip-text text-4xl font-bold tracking-tight text-transparent drop-shadow-[0_1px_1px_rgba(255,255,255,0.25)] sm:text-5xl md:text-7xl">
-            Namish Mannepalli
-          </h1>
+          <PenLine size={12} />
+          <span>An essay in code · Cal Poly SLO</span>
         </motion.div>
 
+        <motion.h1
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.1, delay: 0.4 }}
+          className="font-serif text-foreground leading-[0.95] tracking-tight text-6xl sm:text-7xl md:text-8xl lg:text-[8.5rem]"
+        >
+          Namish
+          <span className="italic text-accent"> Mannepalli</span>
+        </motion.h1>
+
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
-          className="max-w-md text-neutral-300 text-base md:text-lg leading-relaxed"
+          transition={{ duration: 1, delay: 0.65 }}
+          className="max-w-xl font-serif text-ink-soft text-xl md:text-2xl leading-snug italic"
         >
-          Full-stack developer & cybersecurity researcher building AI-powered
-          products. Project Lead at Code Box, building apps with real users.
+          Full-stack developer & cybersecurity researcher. I write software the way
+          others write essays — by hand, with intent, one careful stroke at a time.
         </motion.p>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.7 }}
-          className="flex gap-4"
+          transition={{ duration: 0.9, delay: 0.9 }}
+          className="mt-4 flex flex-wrap items-center justify-center gap-3 pointer-events-auto"
         >
+          <a
+            href="mailto:namishmannepalli2024@gmail.com"
+            className="group flex items-center gap-2 rounded-none border border-ink bg-ink px-5 py-2.5 text-sm font-mono uppercase tracking-widest text-background transition-all hover:bg-background hover:text-ink"
+          >
+            <Mail size={14} /> Begin a correspondence
+          </a>
           <a
             href="https://github.com/namishm123"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2 rounded-full border border-neutral-700 bg-black/40 text-neutral-300 hover:border-indigo-500 hover:text-white transition-all text-sm backdrop-blur-sm"
+            className="flex items-center gap-2 rounded-none border border-ink/40 bg-background/40 px-5 py-2.5 text-sm font-mono uppercase tracking-widest text-ink-soft backdrop-blur-sm transition-all hover:border-ink hover:text-ink"
           >
-            <GitFork size={16} /> GitHub
+            <GitFork size={14} /> GitHub
           </a>
           <a
             href="https://linkedin.com/in/namish-mannepalli"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2 rounded-full border border-neutral-700 bg-black/40 text-neutral-300 hover:border-indigo-500 hover:text-white transition-all text-sm backdrop-blur-sm"
+            className="flex items-center gap-2 rounded-none border border-ink/40 bg-background/40 px-5 py-2.5 text-sm font-mono uppercase tracking-widest text-ink-soft backdrop-blur-sm transition-all hover:border-ink hover:text-ink"
           >
-            <Link size={16} /> LinkedIn
-          </a>
-          <a
-            href="mailto:namishmannepalli2024@gmail.com"
-            className="flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-600 text-white hover:bg-indigo-500 transition-all text-sm"
-          >
-            <Mail size={16} /> Contact
+            <Link size={14} /> LinkedIn
           </a>
         </motion.div>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.4, delay: 1.4 }}
+          className="mt-6 font-mono text-[10px] tracking-[0.35em] uppercase text-muted-foreground"
+        >
+          ✱ drag your cursor across the page ✱
+        </motion.p>
       </div>
 
-      {/* Scroll indicator */}
+      {/* Scroll mark */}
       <motion.div
-        className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 flex flex-col items-center gap-2 text-neutral-500 text-xs"
+        className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 flex flex-col items-center gap-2 font-mono text-[10px] tracking-[0.4em] uppercase text-muted-foreground pointer-events-none"
         animate={{ y: [0, 8, 0] }}
-        transition={{ repeat: Infinity, duration: 2 }}
+        transition={{ repeat: Infinity, duration: 2.4 }}
       >
-        <span>scroll</span>
-        <ArrowDown size={14} />
+        <span>read on</span>
+        <ArrowDown size={14} className="text-accent" />
       </motion.div>
     </section>
   )

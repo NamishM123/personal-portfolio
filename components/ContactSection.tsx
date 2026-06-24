@@ -17,60 +17,59 @@ export function ContactSection() {
         transition={{ duration: 0.8 }}
         className="text-center max-w-2xl mx-auto"
       >
-        <p className="text-indigo-400 font-mono text-sm tracking-widest uppercase mb-4">
-          Get in touch
+        <p className="text-accent font-mono text-[11px] tracking-[0.3em] uppercase mb-4">
+          ☞ Epilogue — Correspondence
         </p>
-        <h2 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
-          Let's build something
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-500">
-            {' '}together.
-          </span>
+        <h2 className="font-serif text-5xl md:text-7xl text-ink mb-8 leading-[1.05]">
+          Let&apos;s write
+          <span className="italic text-accent"> the next chapter</span>
+          <span className="text-accent">.</span>
         </h2>
-        <p className="text-neutral-400 text-lg mb-10">
-          I'm always open to interesting projects, internships, and collaborations.
-          Reach out — I reply fast.
+        <p className="text-ink-soft text-lg md:text-xl font-serif italic mb-10 leading-relaxed">
+          I&apos;m always open to interesting projects, internships, and collaborations.
+          Send a letter — I tend to write back within a day.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <a
             href="mailto:namishmannepalli2024@gmail.com"
-            className="flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-indigo-600 text-white hover:bg-indigo-500 transition-all font-medium"
+            className="flex items-center justify-center gap-2 px-6 py-3 rounded-none border border-ink bg-ink text-background hover:bg-background hover:text-ink transition-all font-mono text-xs uppercase tracking-[0.25em]"
           >
-            <Mail size={16} />
+            <Mail size={14} />
             namishmannepalli2024@gmail.com
           </a>
         </div>
 
-        <div className="flex justify-center gap-6 mt-8">
+        <div className="flex justify-center gap-8 mt-10">
           <a
             href="https://github.com/namishm123"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 text-neutral-400 hover:text-white transition-colors text-sm"
+            className="flex items-center gap-2 text-ink-soft hover:text-accent transition-colors text-xs font-mono tracking-[0.25em] uppercase"
           >
-            <GitFork size={16} /> GitHub
+            <GitFork size={14} /> GitHub
           </a>
           <a
             href="https://linkedin.com/in/namish-mannepalli"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 text-neutral-400 hover:text-white transition-colors text-sm"
+            className="flex items-center gap-2 text-ink-soft hover:text-accent transition-colors text-xs font-mono tracking-[0.25em] uppercase"
           >
-            <Link size={16} /> LinkedIn
+            <Link size={14} /> LinkedIn
           </a>
           <a
             href="https://namishm123.github.io"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 text-neutral-400 hover:text-white transition-colors text-sm"
+            className="flex items-center gap-2 text-ink-soft hover:text-accent transition-colors text-xs font-mono tracking-[0.25em] uppercase"
           >
-            <ExternalLink size={16} /> namishm123.github.io
+            <ExternalLink size={14} /> Archive
           </a>
         </div>
       </motion.div>
 
-      <div className="mt-24 pt-8 border-t border-neutral-800 text-center text-neutral-600 text-xs font-mono">
-        © 2026 Namish Mannepalli · Built with Next.js, Tailwind CSS, Framer Motion
+      <div className="mt-24 pt-8 border-t border-border-soft text-center text-muted-foreground text-[10px] font-mono tracking-[0.3em] uppercase">
+        ✱ Set in Instrument Serif & Geist · © 2026 Namish Mannepalli · Pressed with Next.js ✱
       </div>
     </section>
   )
