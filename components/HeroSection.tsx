@@ -40,19 +40,23 @@ export function HeroSection() {
 
   return (
     <section className="relative flex h-screen w-full items-center justify-center overflow-hidden">
-      {/* Scrim: keeps the copy legible where the backdrop blooms brightest */}
+      {/*
+        Scrim. Weighted to the lower half, where the copy sits, so the
+        subject's face in the upper third stays readable through it.
+      */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 z-0"
         style={{
           background:
-            'radial-gradient(ellipse 68% 56% at 50% 48%, rgba(0,0,0,0.76) 0%, rgba(0,0,0,0.5) 46%, rgba(0,0,0,0.12) 74%, rgba(0,0,0,0) 100%), ' +
-            'linear-gradient(to top, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0) 17%)',
+            'radial-gradient(ellipse 78% 40% at 50% 76%, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.62) 44%, rgba(0,0,0,0.16) 78%, rgba(0,0,0,0) 100%), ' +
+            'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.24) 32%, rgba(0,0,0,0) 58%)',
         }}
       />
 
       {/* Foreground content, stacked and centered */}
-      <div className="relative z-10 flex h-full flex-col items-center justify-center gap-6 px-6 text-center">
+      {/* Sits low in the frame so the backdrop's subject has the upper third */}
+      <div className="relative z-10 flex h-full flex-col items-center justify-end gap-6 px-6 pb-[11vh] text-center">
         <motion.p
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
