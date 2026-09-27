@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion'
 import { ArrowUpRight, Sparkles } from 'lucide-react'
 import { TiltCard } from '@/components/ui/tilt-card'
 import { Reveal } from '@/components/ui/reveal'
@@ -181,7 +181,11 @@ export function ProjectsSection() {
     target: targetRef,
     offset: ['start start', 'end end'],
   })
-  const x = useTransform(scrollYProgress, [0, 1], [0, -travel])
+  const xRaw = useTransform(scrollYProgress, [0, 1], [0, -travel])
+  // Trailing spring gives the rail weight — it eases in behind the scroll.
+  const x = useSpring(xRaw, { stiffness: 120, damping: 30, mass: 0.5 })
+  // Subtle progress line under the rail so the pan reads as intentional.
+  const railProgress = useTransform(scrollYProgress, [0, 1], ['0%', '100%'])
 
   useEffect(() => {
     const measure = () => {
@@ -226,7 +230,7 @@ export function ProjectsSection() {
         className="relative mt-12 hidden md:block"
         style={{ height: `${Math.max(travel + 200, 600)}px` }}
       >
-        <div className="sticky top-0 flex h-screen items-center overflow-hidden">
+        <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden">
           <motion.div
             ref={trackRef}
             style={{ x }}
@@ -238,6 +242,14 @@ export function ProjectsSection() {
             {/* trailing spacer card so the last card clears the edge */}
             <div className="w-8 shrink-0" aria-hidden />
           </motion.div>
+
+          {/* Rail progress indicator */}
+          <div className="mx-8 mt-12 h-px max-w-xs overflow-hidden bg-neutral-800 md:mx-16">
+            <motion.div
+              style={{ width: railProgress }}
+              className="h-full bg-gradient-to-r from-indigo-500 to-fuchsia-500"
+            />
+          </div>
         </div>
       </div>
 

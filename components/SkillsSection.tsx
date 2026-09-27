@@ -1,5 +1,12 @@
 'use client'
 
+import {
+  motion,
+  useScroll,
+  useVelocity,
+  useSpring,
+  useTransform,
+} from 'framer-motion'
 import { Reveal } from '@/components/ui/reveal'
 
 const skillGroups = [
@@ -70,6 +77,17 @@ const ticker = [
 ]
 
 export function SkillsSection() {
+  // The ticker reacts to scroll velocity: skews with momentum, settles at rest.
+  const { scrollY } = useScroll()
+  const scrollVelocity = useVelocity(scrollY)
+  const smoothVelocity = useSpring(scrollVelocity, {
+    damping: 50,
+    stiffness: 400,
+  })
+  const skew = useTransform(smoothVelocity, [-1500, 0, 1500], [-6, 0, 6], {
+    clamp: true,
+  })
+
   return (
     <section className="mx-auto max-w-7xl px-8 py-24 md:px-16" id="skills">
       <Reveal>
@@ -81,8 +99,8 @@ export function SkillsSection() {
         <h2 className="mb-12 text-4xl font-bold text-white md:text-5xl">Skills</h2>
       </Reveal>
 
-      {/* Infinite ticker */}
-      <div className="marquee-mask relative mb-14 overflow-hidden">
+      {/* Infinite ticker — skews with scroll momentum */}
+      <motion.div style={{ skewX: skew }} className="marquee-mask relative mb-14 overflow-hidden">
         <div className="animate-marquee flex w-max gap-3">
           {[...ticker, ...ticker].map((s, i) => (
             <span
@@ -93,7 +111,7 @@ export function SkillsSection() {
             </span>
           ))}
         </div>
-      </div>
+      </motion.div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {skillGroups.map((group, gi) => (
