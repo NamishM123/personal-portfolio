@@ -17,6 +17,7 @@ export function HeroSection() {
       description="Namish Mannepalli — CS at Cal Poly SLO, undergraduate researcher and founder building AI-powered products with real users, from a teaching assistant that guides without giving answers to a restaurant platform serving live orders."
       ctaLabel="Get in touch"
       ctaHref="#contact"
+      videoSrc="/hero.mp4"
     />
   )
 }
