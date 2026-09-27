@@ -4,32 +4,29 @@ import { motion } from 'framer-motion'
 import { GitFork, Link, Mail } from 'lucide-react'
 import { WorksWheel, type WorksWheelItem } from '@/components/ui/works-wheel'
 
-// Reliable, widely-used Unsplash covers; a missing one degrades to a brand
-// gradient via the wheel's onError fallback.
-const IMG = (id: string) =>
-  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=900&q=80`
-
+// Bespoke cover art committed under /public/works. Swap any of these for a real
+// app screenshot by dropping a file at the same path.
 const works: WorksWheelItem[] = [
-  { title: 'Usely', image: IMG('1461749280684-dccba630e2f6'), href: '#projects' },
-  { title: 'Sightline', image: IMG('1497366811353-6870744d04b2'), href: '#projects' },
-  { title: 'Starly', image: IMG('1478737270239-2f02b77fc618'), href: '#projects' },
-  { title: 'Benu', image: IMG('1517248135467-4c7edcad34c4'), href: '#projects' },
+  { title: 'Usely', image: '/works/usely.svg', href: '#projects' },
+  { title: 'Sightline', image: '/works/sightline.svg', href: '#projects' },
+  { title: 'Starly', image: '/works/starly.svg', href: '#projects' },
+  { title: 'Benu', image: '/works/benu.svg', href: '#projects' },
   {
     title: 'Poly Problems',
-    image: IMG('1477959858617-67f85cf4f1df'),
+    image: '/works/poly-problems.svg',
     href: 'https://www.polyproblems.com/',
   },
   {
     title: 'Settlr',
-    image: IMG('1560448204-e02f11c3d0e2'),
+    image: '/works/settlr.svg',
     href: 'https://housing-app-delta.vercel.app/',
   },
   {
     title: 'Recipe Vision',
-    image: IMG('1504674900247-0877df9cc836'),
+    image: '/works/recipe-vision.svg',
     href: 'https://recepie-ingridients-aske.vercel.app/',
   },
-  { title: 'FLEX', image: IMG('1534438327276-14e5300c3a48'), href: '#projects' },
+  { title: 'FLEX', image: '/works/flex.svg', href: '#projects' },
 ]
 
 export function HeroSection() {
