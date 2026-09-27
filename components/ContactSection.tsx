@@ -21,13 +21,13 @@ export function ContactSection() {
           Get in touch
         </p>
         <h2 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
-          Let's build something
+          Let&apos;s build something
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-500">
             {' '}together.
           </span>
         </h2>
         <p className="text-neutral-400 text-lg mb-10">
-          I'm always open to interesting projects, internships, and collaborations.
+          I&apos;m always open to interesting projects, internships, and collaborations.
           Reach out — I reply fast.
         </p>
 

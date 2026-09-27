@@ -7,12 +7,25 @@ import {
   useSpring,
   useTransform,
   useMotionTemplate,
+  useScroll,
 } from 'framer-motion'
 import { ShaderAnimation } from '@/components/ui/shader-animation'
 import { Spotlight } from '@/components/ui/spotlight'
 import { GitFork, Link, Mail, ArrowDown } from 'lucide-react'
 
 export function HeroSection() {
+  // Scroll-linked parallax: content drifts up + fades, background dims & lifts.
+  const sectionRef = useRef<HTMLElement>(null)
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end start'],
+  })
+  const contentY = useTransform(scrollYProgress, [0, 1], ['0%', '-45%'])
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0])
+  const contentScale = useTransform(scrollYProgress, [0, 1], [1, 0.92])
+  const bgY = useTransform(scrollYProgress, [0, 1], ['0%', '30%'])
+  const bgOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0.25])
+
   // Interactive glass-tilt for the name
   const nameRef = useRef<HTMLDivElement>(null)
   const px = useMotionValue(0.5)
@@ -41,23 +54,32 @@ export function HeroSection() {
   }
 
   return (
-    <section className="relative h-screen w-full bg-black overflow-hidden">
+    <section
+      ref={sectionRef}
+      className="relative h-screen w-full bg-black overflow-hidden"
+    >
       <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="white" />
 
-      {/* Background: slow shader "splash" */}
-      <div className="absolute inset-0 z-0">
+      {/* Background: slow shader "splash" — parallaxes and dims on scroll */}
+      <motion.div
+        style={{ y: bgY, opacity: bgOpacity }}
+        className="absolute inset-0 z-0"
+      >
         <ShaderAnimation brightness={0.28} speed={0.018} className="w-full h-full" />
-      </div>
+      </motion.div>
 
       {/* Foreground content, stacked and centered */}
-      <div className="relative z-10 flex h-full flex-col items-center justify-center gap-6 px-6 text-center">
+      <motion.div
+        style={{ y: contentY, opacity: contentOpacity, scale: contentScale }}
+        className="relative z-10 flex h-full flex-col items-center justify-center gap-6 px-6 text-center"
+      >
         <motion.p
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
           className="text-indigo-400 text-sm font-mono tracking-widest uppercase"
         >
-          CS Student @ Cal Poly SLO
+          CS @ Cal Poly SLO · Researcher · Builder
         </motion.p>
 
         {/* Name — crisp grey glass treatment, tilts and catches light on hover */}
@@ -88,8 +110,9 @@ export function HeroSection() {
           transition={{ duration: 0.8, delay: 0.5 }}
           className="max-w-md text-neutral-300 text-base md:text-lg leading-relaxed"
         >
-          Full-stack developer & cybersecurity researcher building AI-powered
-          products. Project Lead at Code Box, building apps with real users.
+          I build AI-powered products with real users — from a teaching
+          assistant that guides without giving answers, to a restaurant platform
+          serving live orders. Undergraduate researcher & founder.
         </motion.p>
 
         <motion.div
@@ -121,16 +144,20 @@ export function HeroSection() {
             <Mail size={16} /> Contact
           </a>
         </motion.div>
-      </div>
+      </motion.div>
 
       {/* Scroll indicator */}
       <motion.div
+        style={{ opacity: contentOpacity }}
         className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 flex flex-col items-center gap-2 text-neutral-500 text-xs"
-        animate={{ y: [0, 8, 0] }}
-        transition={{ repeat: Infinity, duration: 2 }}
       >
         <span>scroll</span>
-        <ArrowDown size={14} />
+        <motion.span
+          animate={{ y: [0, 8, 0] }}
+          transition={{ repeat: Infinity, duration: 2 }}
+        >
+          <ArrowDown size={14} />
+        </motion.span>
       </motion.div>
     </section>
   )

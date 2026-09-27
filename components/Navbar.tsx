@@ -6,6 +6,7 @@ import { Menu, X } from 'lucide-react'
 
 const links = [
   { label: 'Projects', href: '#projects' },
+  { label: 'Impact', href: '#impact' },
   { label: 'Experience', href: '#experience' },
   { label: 'Skills', href: '#skills' },
   { label: 'Contact', href: '#contact' },
@@ -14,11 +15,30 @@ const links = [
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [active, setActive] = useState('')
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
     window.addEventListener('scroll', onScroll)
     return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  // Scroll-spy: highlight the section currently in view.
+  useEffect(() => {
+    const ids = links.map((l) => l.href.slice(1))
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActive(entry.target.id)
+        })
+      },
+      { rootMargin: '-45% 0px -50% 0px' }
+    )
+    ids.forEach((id) => {
+      const el = document.getElementById(id)
+      if (el) observer.observe(el)
+    })
+    return () => observer.disconnect()
   }, [])
 
   return (
@@ -37,15 +57,26 @@ export function Navbar() {
 
         {/* Desktop links */}
         <div className="hidden md:flex items-center gap-8">
-          {links.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              className="text-neutral-400 hover:text-white text-sm transition-colors"
-            >
-              {link.label}
-            </a>
-          ))}
+          {links.map((link) => {
+            const isActive = active === link.href.slice(1)
+            return (
+              <a
+                key={link.label}
+                href={link.href}
+                className={`relative text-sm transition-colors ${
+                  isActive ? 'text-white' : 'text-neutral-400 hover:text-white'
+                }`}
+              >
+                {link.label}
+                {isActive && (
+                  <motion.span
+                    layoutId="nav-active"
+                    className="absolute -bottom-1.5 left-0 right-0 h-px bg-indigo-400"
+                  />
+                )}
+              </a>
+            )
+          })}
           <a
             href="mailto:namishmannepalli2024@gmail.com"
             className="px-4 py-1.5 rounded-full bg-indigo-600 text-white text-sm hover:bg-indigo-500 transition-colors"
