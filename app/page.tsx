@@ -1,4 +1,3 @@
-import { Navbar } from '@/components/Navbar'
 import { HeroSection } from '@/components/HeroSection'
 import { ProjectsSection } from '@/components/ProjectsSection'
 import { ImpactSection } from '@/components/ImpactSection'
@@ -13,7 +12,6 @@ export default function Home() {
     <main className="relative min-h-screen bg-black">
       <AmbientGlow />
       <ScrollProgress />
-      <Navbar />
 
       <div className="relative z-10">
         <HeroSection />
