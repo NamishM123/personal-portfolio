@@ -1,4 +1,5 @@
 import { HeroSection } from '@/components/HeroSection'
+import { JourneySection } from '@/components/JourneySection'
 import { ProjectsSection } from '@/components/ProjectsSection'
 import { ImpactSection } from '@/components/ImpactSection'
 import { ExperienceSection } from '@/components/ExperienceSection'
@@ -15,6 +16,7 @@ export default function Home() {
 
       <div className="relative z-10">
         <HeroSection />
+        <JourneySection />
         <div className="border-t border-neutral-900">
           <ProjectsSection />
         </div>
