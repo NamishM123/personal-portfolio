@@ -1,131 +1,79 @@
 'use client'
 
-import { useRef } from 'react'
-import {
-  motion,
-  useMotionValue,
-  useSpring,
-  useTransform,
-  useMotionTemplate,
-  useScroll,
-} from 'framer-motion'
-import { ShaderAnimation } from '@/components/ui/shader-animation'
-import { Spotlight } from '@/components/ui/spotlight'
-import { GitFork, Link, Mail, ArrowDown } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { GitFork, Link, Mail } from 'lucide-react'
+import { WorksWheel, type WorksWheelItem } from '@/components/ui/works-wheel'
+
+// Reliable, widely-used Unsplash covers; a missing one degrades to a brand
+// gradient via the wheel's onError fallback.
+const IMG = (id: string) =>
+  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=900&q=80`
+
+const works: WorksWheelItem[] = [
+  { title: 'Usely', image: IMG('1461749280684-dccba630e2f6'), href: '#projects' },
+  { title: 'Sightline', image: IMG('1497366811353-6870744d04b2'), href: '#projects' },
+  { title: 'Starly', image: IMG('1478737270239-2f02b77fc618'), href: '#projects' },
+  { title: 'Benu', image: IMG('1517248135467-4c7edcad34c4'), href: '#projects' },
+  {
+    title: 'Poly Problems',
+    image: IMG('1477959858617-67f85cf4f1df'),
+    href: 'https://www.polyproblems.com/',
+  },
+  {
+    title: 'Settlr',
+    image: IMG('1560448204-e02f11c3d0e2'),
+    href: 'https://housing-app-delta.vercel.app/',
+  },
+  {
+    title: 'Recipe Vision',
+    image: IMG('1504674900247-0877df9cc836'),
+    href: 'https://recepie-ingridients-aske.vercel.app/',
+  },
+  { title: 'FLEX', image: IMG('1534438327276-14e5300c3a48'), href: '#projects' },
+]
 
 export function HeroSection() {
-  // Scroll-linked parallax: content drifts up + fades, background dims & lifts.
-  const sectionRef = useRef<HTMLElement>(null)
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start start', 'end start'],
-  })
-  const contentY = useTransform(scrollYProgress, [0, 1], ['0%', '-45%'])
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0])
-  const contentScale = useTransform(scrollYProgress, [0, 1], [1, 0.92])
-  const bgY = useTransform(scrollYProgress, [0, 1], ['0%', '30%'])
-  const bgOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0.25])
-
-  // Interactive glass-tilt for the name
-  const nameRef = useRef<HTMLDivElement>(null)
-  const px = useMotionValue(0.5)
-  const py = useMotionValue(0.5)
-  const rotateX = useSpring(useTransform(py, [0, 1], [10, -10]), {
-    stiffness: 150,
-    damping: 15,
-  })
-  const rotateY = useSpring(useTransform(px, [0, 1], [-12, 12]), {
-    stiffness: 150,
-    damping: 15,
-  })
-  const glareX = useTransform(px, (v) => `${v * 100}%`)
-  const glareY = useTransform(py, (v) => `${v * 100}%`)
-  const glare = useMotionTemplate`radial-gradient(circle at ${glareX} ${glareY}, rgba(255,255,255,0.28), transparent 55%)`
-
-  const handleNameMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = nameRef.current?.getBoundingClientRect()
-    if (!rect) return
-    px.set((e.clientX - rect.left) / rect.width)
-    py.set((e.clientY - rect.top) / rect.height)
-  }
-  const handleNameLeave = () => {
-    px.set(0.5)
-    py.set(0.5)
-  }
-
   return (
-    <section
-      ref={sectionRef}
-      className="relative h-screen w-full bg-black overflow-hidden"
-    >
-      <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="white" />
+    <section className="relative h-screen w-full overflow-hidden bg-black">
+      {/* The front page is now a turnable index of the work. Scroll or drag to
+          spin the ring open into a drum; it releases the page at either end. */}
+      <WorksWheel
+        items={works}
+        label="Namish Mannepalli"
+        action="Open"
+        className="h-full"
+      />
 
-      {/* Background: slow shader "splash" — parallaxes and dims on scroll */}
+      {/* Eyebrow — identity, top-left, clear of the wheel index */}
       <motion.div
-        style={{ y: bgY, opacity: bgOpacity }}
-        className="absolute inset-0 z-0"
+        initial={{ opacity: 0, y: -12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.3 }}
+        className="pointer-events-none absolute left-8 top-24 z-20 md:left-16"
       >
-        <ShaderAnimation brightness={0.28} speed={0.018} className="w-full h-full" />
+        <p className="font-mono text-xs uppercase tracking-widest text-indigo-300 drop-shadow-[0_1px_6px_rgba(0,0,0,0.8)]">
+          CS @ Cal Poly SLO · Researcher · Builder
+        </p>
       </motion.div>
 
-      {/* Foreground content, stacked and centered */}
+      {/* Bottom overlay — tagline, links, and a turn hint */}
       <motion.div
-        style={{ y: contentY, opacity: contentOpacity, scale: contentScale }}
-        className="relative z-10 flex h-full flex-col items-center justify-center gap-6 px-6 text-center"
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.5 }}
+        className="pointer-events-none absolute inset-x-0 bottom-8 z-20 flex flex-col items-center gap-4 px-6 text-center"
       >
-        <motion.p
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-indigo-400 text-sm font-mono tracking-widest uppercase"
-        >
-          CS @ Cal Poly SLO · Researcher · Builder
-        </motion.p>
+        <p className="max-w-md text-sm text-neutral-300 drop-shadow-[0_1px_8px_rgba(0,0,0,0.9)] md:text-base">
+          I build AI-powered products with real users. Turn the wheel to browse
+          the work.
+        </p>
 
-        {/* Name — crisp grey glass treatment, tilts and catches light on hover */}
-        <motion.div
-          ref={nameRef}
-          onMouseMove={handleNameMove}
-          onMouseLeave={handleNameLeave}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.35 }}
-          style={{ rotateX, rotateY, transformPerspective: 900 }}
-          className="group relative rounded-3xl border border-white/10 bg-white/[0.04] px-8 py-5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_20px_60px_-20px_rgba(0,0,0,0.7)] [transform-style:preserve-3d]"
-        >
-          {/* Moving specular sheen that follows the cursor */}
-          <motion.div
-            aria-hidden
-            style={{ background: glare }}
-            className="pointer-events-none absolute inset-0 rounded-3xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-          />
-          <h1 className="relative bg-gradient-to-b from-white via-neutral-300 to-neutral-500 bg-clip-text text-4xl font-bold tracking-tight text-transparent drop-shadow-[0_1px_1px_rgba(255,255,255,0.25)] sm:text-5xl md:text-7xl">
-            Namish Mannepalli
-          </h1>
-        </motion.div>
-
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
-          className="max-w-md text-neutral-300 text-base md:text-lg leading-relaxed"
-        >
-          I build AI-powered products with real users — from a teaching
-          assistant that guides without giving answers, to a restaurant platform
-          serving live orders. Undergraduate researcher & founder.
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.7 }}
-          className="flex gap-4"
-        >
+        <div className="pointer-events-auto flex flex-wrap justify-center gap-3">
           <a
             href="https://github.com/namishm123"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2 rounded-full border border-neutral-700 bg-black/40 text-neutral-300 hover:border-indigo-500 hover:text-white transition-all text-sm backdrop-blur-sm"
+            className="flex items-center gap-2 rounded-full border border-white/15 bg-black/50 px-4 py-2 text-sm text-neutral-200 backdrop-blur-sm transition-all hover:border-indigo-400 hover:text-white"
           >
             <GitFork size={16} /> GitHub
           </a>
@@ -133,31 +81,17 @@ export function HeroSection() {
             href="https://linkedin.com/in/namish-mannepalli"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2 rounded-full border border-neutral-700 bg-black/40 text-neutral-300 hover:border-indigo-500 hover:text-white transition-all text-sm backdrop-blur-sm"
+            className="flex items-center gap-2 rounded-full border border-white/15 bg-black/50 px-4 py-2 text-sm text-neutral-200 backdrop-blur-sm transition-all hover:border-indigo-400 hover:text-white"
           >
             <Link size={16} /> LinkedIn
           </a>
           <a
             href="mailto:namishmannepalli2024@gmail.com"
-            className="flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-600 text-white hover:bg-indigo-500 transition-all text-sm"
+            className="flex items-center gap-2 rounded-full bg-indigo-600 px-4 py-2 text-sm text-white transition-all hover:bg-indigo-500"
           >
             <Mail size={16} /> Contact
           </a>
-        </motion.div>
-      </motion.div>
-
-      {/* Scroll indicator */}
-      <motion.div
-        style={{ opacity: contentOpacity }}
-        className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 flex flex-col items-center gap-2 text-neutral-500 text-xs"
-      >
-        <span>scroll</span>
-        <motion.span
-          animate={{ y: [0, 8, 0] }}
-          transition={{ repeat: Infinity, duration: 2 }}
-        >
-          <ArrowDown size={14} />
-        </motion.span>
+        </div>
       </motion.div>
     </section>
   )
