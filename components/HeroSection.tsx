@@ -8,7 +8,7 @@ export function HeroSection() {
       title="Namish"
       showAsterisk
       navItems={[
-        { label: 'Work', href: '#projects' },
+        { label: 'Work', href: '#journey' },
         { label: 'Impact', href: '#impact' },
         { label: 'Experience', href: '#experience' },
         { label: 'Skills', href: '#skills' },
